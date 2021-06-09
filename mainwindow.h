@@ -19,7 +19,7 @@ private slots:
 	void changeTaxInfo(int aValue);
 
 private:
-	void setupTaxComboBox();
+	void setupTax();
 
     Ui::MainWindow *ui;
 };
