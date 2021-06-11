@@ -19,8 +19,10 @@ private slots:
 	void changeTaxInfo(int aValue);
 
 private:
+	void setupMasks();
 	void setupTax();
+	void setupSignals();
 
-    Ui::MainWindow *ui;
+	Ui::MainWindow* ui;
 };
 #endif // MAINWINDOW_H

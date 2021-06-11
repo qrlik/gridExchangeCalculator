@@ -10,10 +10,15 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    statecontroller.cpp \
+    statelabel.cpp
 
 HEADERS += \
-    mainwindow.h
+    globalvariables.h \
+    mainwindow.h \
+    statecontroller.h \
+    statelabel.h
 
 FORMS += \
     mainwindow.ui
