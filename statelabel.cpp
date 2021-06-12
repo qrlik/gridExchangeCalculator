@@ -6,31 +6,36 @@ StateLabel::StateLabel(QWidget* aParent): QLabel(aParent)
 	updateStateText();
 }
 
+void StateLabel::setPrecision(int aPrecision)
+{
+	precision = aPrecision;
+}
+
 void StateLabel::updateUpperPrice(QString aValue)
 {
 	auto result = stateController.updateUpperPrice(aValue);
-	emit upperPriceChanged(QString::number(result, 'f', precisionStocks));
+	emit upperPriceChanged(QString::number(result, 'f', precision));
 	updateStateText();
 }
 
 void StateLabel::updateCurrentPrice(QString aValue)
 {
 	auto result = stateController.updateCurrentPrice(aValue);
-	emit currentPriceChanged(QString::number(result, 'f', precisionStocks));
+	emit currentPriceChanged(QString::number(result, 'f', precision));
 	updateStateText();
 }
 
 void StateLabel::updateLowerPrice(QString aValue)
 {
 	auto result = stateController.updateLowerPrice(aValue);
-	emit lowerPriceChanged(QString::number(result, 'f', precisionStocks));
+	emit lowerPriceChanged(QString::number(result, 'f', precision));
 	updateStateText();
 }
 
 void StateLabel::updateStopLossPrice(QString aValue)
 {
 	auto result = stateController.updateStopLossPrice(aValue);
-	emit stopLossPriceChanged(QString::number(result, 'f', precisionStocks));
+	emit stopLossPriceChanged(QString::number(result, 'f', precision));
 	updateStateText();
 }
 
@@ -55,32 +60,48 @@ void StateLabel::updateGridsAmount(int aValue)
 
 void StateLabel::updateStateText()
 {
-	auto state = stateController.getCurrentState();
-	switch (state)
+	if (stateController.getUpperPrice() == 0.0)
 	{
-	case StateController::eValuesState::empty:
-		setText("Enter some data");
-		break;
-	case StateController::eValuesState::upperPrice:
-		setText("Enter upper price!");
-		break;
-	case StateController::eValuesState::currentPrice:
-		setText("Enter current price!");
-		break;
-	case StateController::eValuesState::lowerPrice:
-		setText("Enter lower price!");
-		break;
-	case StateController::eValuesState::stopLossPrice:
-		setText("Enter stop loss price!");
-		break;
-	case StateController::eValuesState::buyTax:
-		setText("Enter buy tax!");
-		break;
-	case StateController::eValuesState::sellTax:
-		setText("Enter sell tax!");
-		break;
-	case StateController::eValuesState::allCorrect:
+		setText("Enter upper price");
+	}
+	else if (stateController.getCurrentPrice() == 0.0)
+	{
+		setText("Enter current price");
+	}
+	else if (stateController.getLowerPrice() == 0.0)
+	{
+		setText("Enter lower price");
+	}
+	else if (stateController.getStopLossPrice() == 0.0)
+	{
+		setText("Enter stop loss price");
+	}
+	else if (stateController.getBuyTax() == 0.0)
+	{
+		setText("Enter buy tax");
+	}
+	else if (stateController.getSellTax() == 0.0)
+	{
+		setText("Enter sell tax");
+	}
+	else if (stateController.getUpperPrice() <= stateController.getLowerPrice())
+	{
+		setText("Upper price must be greater than lower");
+	}
+	else if (stateController.getLowerPrice() <= stateController.getStopLossPrice())
+	{
+		setText("Lower price must be greater than Stop Loss price");
+	}
+	else if (stateController.getUpperPrice() <= stateController.getCurrentPrice())
+	{
+		setText("Upper price must be greater than Current price");
+	}
+	else if (stateController.getCurrentPrice() <= stateController.getStopLossPrice())
+	{
+		setText("Current price must be greater than Stop Loss price");
+	}
+	else
+	{
 		setText("Correct");
-		break;
 	}
 }

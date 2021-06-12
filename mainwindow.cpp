@@ -10,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 
 	setupSignals();
-	setupMasks();
 	setupTax();
+	setupPrecision();
 
 	QApplication::setStyle(QStyleFactory::create("Fusion"));
 }
@@ -21,25 +21,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setupMasks()
+void MainWindow::setupMasks(QString aMask)
 {
-	ui->UpperPriceEdit->setInputMask(priceMaskStocks);
-	ui->UpperPriceEdit->setText(priceMaskStocks);
+	ui->UpperPriceEdit->setInputMask(aMask);
+	ui->UpperPriceEdit->setText(aMask);
 
-	ui->CurrentPriceEdit->setInputMask(priceMaskStocks);
-	ui->CurrentPriceEdit->setText(priceMaskStocks);
+	ui->CurrentPriceEdit->setInputMask(aMask);
+	ui->CurrentPriceEdit->setText(aMask);
 
-	ui->LowerPriceEdit->setInputMask(priceMaskStocks);
-	ui->LowerPriceEdit->setText(priceMaskStocks);
+	ui->LowerPriceEdit->setInputMask(aMask);
+	ui->LowerPriceEdit->setText(aMask);
 
-	ui->StopLossPriceEdit->setInputMask(priceMaskStocks);
-	ui->StopLossPriceEdit->setText(priceMaskStocks);
+	ui->StopLossPriceEdit->setInputMask(aMask);
+	ui->StopLossPriceEdit->setText(aMask);
 
-	ui->TaxBuyAmountEdit->setInputMask(taxMask);
-	ui->TaxBuyAmountEdit->setText(taxMask);
 
-	ui->TaxSellAmountEdit->setInputMask(taxMask);
-	ui->TaxSellAmountEdit->setText(taxMask);
 }
 
 void MainWindow::setupSignals()
@@ -68,6 +64,12 @@ void MainWindow::setupSignals()
 
 void MainWindow::setupTax()
 {
+	ui->TaxBuyAmountEdit->setInputMask(taxMask);
+	ui->TaxBuyAmountEdit->setText(taxMask);
+
+	ui->TaxSellAmountEdit->setInputMask(taxMask);
+	ui->TaxSellAmountEdit->setText(taxMask);
+
 	auto* TaxComboBox = ui->TaxTypeBox;
 	TaxComboBox->addItem(QStringLiteral("Tinkoff Investments"));
 	TaxComboBox->addItem(QStringLiteral("Huobi"));
@@ -104,4 +106,29 @@ void MainWindow::changeTaxInfo(int aValue)
 		sellTaxEdit->setText(taxMask);
 	}
 	ui->TaxCommentLabel->setText(commentString);
+}
+
+void MainWindow::setupPrecision()
+{
+	auto* PrecisionComboBox = ui->PrecisionBox;
+	PrecisionComboBox->addItem(QStringLiteral("Stock (2)"));
+	PrecisionComboBox->addItem(QStringLiteral("Crypto (8)"));
+
+	connect(PrecisionComboBox, SIGNAL(activated(int)), SLOT(changePrecision(int)));
+	changePrecision(0);
+}
+
+void MainWindow::changePrecision(int aValue)
+{
+	switch (aValue)
+	{
+	case 0:
+		ui->inputInfoStateLabel->setPrecision(precisionStocks);
+		setupMasks(priceMaskStocks);
+		break;
+	case 1:
+		ui->inputInfoStateLabel->setPrecision(precisionCrypto);
+		setupMasks(priceMaskCrypt);
+		break;
+	}
 }

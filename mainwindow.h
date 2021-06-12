@@ -17,11 +17,13 @@ public:
 
 private slots:
 	void changeTaxInfo(int aValue);
+	void changePrecision(int aValue);
 
 private:
-	void setupMasks();
-	void setupTax();
 	void setupSignals();
+	void setupMasks(QString aMasks);
+	void setupTax();
+	void setupPrecision();
 
 	Ui::MainWindow* ui;
 };
