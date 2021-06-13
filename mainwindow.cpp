@@ -106,6 +106,7 @@ void MainWindow::changeTaxInfo(int aValue)
 		sellTaxEdit->setEnabled(true);
 		buyTaxEdit->setText(taxMask);
 		sellTaxEdit->setText(taxMask);
+		commentString = QStringLiteral("* dynamic tax only in Stock precision");
 	}
 	ui->TaxCommentLabel->setText(commentString);
 }

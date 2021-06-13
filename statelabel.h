@@ -31,9 +31,10 @@ signals:
 	void gridsAmountSliderRangeChanged(int, int);
 
 private:
-	void updateStateText();
+	void update();
+	void updateData();
 
-	inputController stateController;
+	dataController stateController;
 	int precision = 0;
 };
 

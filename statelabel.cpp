@@ -3,7 +3,7 @@
 
 StateLabel::StateLabel(QWidget* aParent): QLabel(aParent)
 {
-	updateStateText();
+	update();
 }
 
 void StateLabel::setPrecision(int aPrecision)
@@ -15,102 +15,109 @@ void StateLabel::updateUpperPrice(QString aValue)
 {
 	auto result = stateController.updateUpperPrice(aValue);
 	emit upperPriceChanged(QString::number(result, 'f', precision));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateCurrentPrice(QString aValue)
 {
 	auto result = stateController.updateCurrentPrice(aValue);
 	emit currentPriceChanged(QString::number(result, 'f', precision));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateLowerPrice(QString aValue)
 {
 	auto result = stateController.updateLowerPrice(aValue);
 	emit lowerPriceChanged(QString::number(result, 'f', precision));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateStopLossPrice(QString aValue)
 {
 	auto result = stateController.updateStopLossPrice(aValue);
 	emit stopLossPriceChanged(QString::number(result, 'f', precision));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateBuyTax(QString aValue)
 {
 	auto result = stateController.updateBuyTax(aValue);
 	emit buyTaxChanged(QString::number(result, 'f', precisionTax));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateSellTax(QString aValue)
 {
 	auto result = stateController.updateSellTax(aValue);
 	emit sellTaxChanged(QString::number(result, 'f', precisionTax));
-	updateStateText();
+	update();
 }
 
 void StateLabel::updateGridsAmount(int aValue)
 {
 	stateController.updateGridsAmount(aValue);
+	update();
 }
 
-void StateLabel::updateStateText()
+void StateLabel::update()
 {
 	bool isAllCorrect = false;
-	if (stateController.getUpperPrice() == 0.0)
+	const auto& inputData = stateController.getInputData();
+	if (inputData.upperPrice == 0.0)
 	{
 		setText("Enter upper price");
 	}
-	else if (stateController.getCurrentPrice() == 0.0)
+	else if (inputData.currentPrice == 0.0)
 	{
 		setText("Enter current price");
 	}
-	else if (stateController.getLowerPrice() == 0.0)
+	else if (inputData.lowerPrice == 0.0)
 	{
 		setText("Enter lower price");
 	}
-	else if (stateController.getStopLossPrice() == 0.0)
+	else if (inputData.stopLossPrice == 0.0)
 	{
 		setText("Enter stop loss price");
 	}
-	else if (stateController.getBuyTax() == 0.0)
+	else if (inputData.buyTax == 0.0)
 	{
 		setText("Enter buy tax");
 	}
-	else if (stateController.getSellTax() == 0.0)
+	else if (inputData.sellTax == 0.0)
 	{
 		setText("Enter sell tax");
 	}
-	else if (stateController.getUpperPrice() <= stateController.getLowerPrice())
+	else if (inputData.upperPrice <= inputData.lowerPrice)
 	{
 		setText("Upper price must be greater than lower");
 	}
-	else if (stateController.getLowerPrice() <= stateController.getStopLossPrice())
+	else if (inputData.lowerPrice <= inputData.stopLossPrice)
 	{
 		setText("Lower price must be greater than Stop Loss price");
 	}
-	else if (stateController.getUpperPrice() <= stateController.getCurrentPrice())
+	else if (inputData.upperPrice <= inputData.currentPrice)
 	{
 		setText("Upper price must be greater than Current price");
 	}
-	else if (stateController.getCurrentPrice() <= stateController.getStopLossPrice())
+	else if (inputData.currentPrice <= inputData.stopLossPrice)
 	{
 		setText("Current price must be greater than Stop Loss price");
 	}
-	else if (stateController.getUpperPrice() / stateController.getLowerPrice()
-			 <= stateController.getBuyTax() + stateController.getSellTax())
+	else if (inputData.upperPrice / inputData.lowerPrice <= inputData.buyTax + inputData.sellTax)
 	{
 		setText("Profit without grids must be less than tax");
 	}
 	else
 	{
 		isAllCorrect = true;
-		emit gridsAmountSliderRangeChanged(0, stateController.updateMaxGridsAmount());
+		updateData();
 		setText("Correct");
 	}
 	emit gridsAmountSliderEnableChanged(isAllCorrect);
+}
+
+void StateLabel::updateData()
+{
+	stateController.updateOutput();
+	emit gridsAmountSliderRangeChanged(0, stateController.getOutputData().maxGridsAmount);
 }
