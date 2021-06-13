@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 	setupSignals();
 	setupTax();
 	setupPrecision();
+	ui->GridsAmountSlider->setEnabled(false);
 
 	QApplication::setStyle(QStyleFactory::create("Fusion"));
 }
@@ -34,8 +35,6 @@ void MainWindow::setupMasks(QString aMask)
 
 	ui->StopLossPriceEdit->setInputMask(aMask);
 	ui->StopLossPriceEdit->setText(aMask);
-
-
 }
 
 void MainWindow::setupSignals()
@@ -60,6 +59,9 @@ void MainWindow::setupSignals()
 
 	ui->inputInfoStateLabel->connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(updateGridsAmount(int)));
 	ui->GridsAmountTipLabel->connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(setNum(int)));
+
+	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderEnableChanged(bool)), SLOT(setEnabled(bool)));
+	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderRangeChanged(int,int)), SLOT(setRange(int, int)));
 }
 
 void MainWindow::setupTax()

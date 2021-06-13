@@ -1,5 +1,5 @@
-#ifndef INPUTCONTROLLER_H
-#define INPUTCONTROLLER_H
+#ifndef DATACONTROLLER_H
+#define DATACONTROLLER_H
 
 #include "QFlag"
 #include "QObject"
@@ -14,11 +14,10 @@ public:
 	double updateCurrentPrice(QString aValue);
 	double updateLowerPrice(QString aValue);
 	double updateStopLossPrice(QString aValue);
-
 	double updateBuyTax(QString aValue);
 	double updateSellTax(QString aValue);
-
 	void updateGridsAmount(int aValue);
+	int updateMaxGridsAmount();
 
 	double getUpperPrice() const;
 	double getCurrentPrice() const;
@@ -30,13 +29,15 @@ public:
 private:
 	double updateDoubleVariable(QString aString, double& aVariable);
 
-	double upperPrice = 0.0;
-	double currentPrice = 0.0;
-	double lowerPrice = 0.0;
-	double stopLossPrice = 0.0;
-	double buyTax = 0.0;
-	double sellTax = 0.0;
-	int gridsAmount = 0;
+	struct inputData {
+		double upperPrice = 0.0;
+		double currentPrice = 0.0;
+		double lowerPrice = 0.0;
+		double stopLossPrice = 0.0;
+		double buyTax = 0.0;
+		double sellTax = 0.0;
+		int gridsAmount = 0;
+	} inputData;
 };
 
-#endif // INPUTCONTROLLER_H
+#endif // DATACONTROLLER_H

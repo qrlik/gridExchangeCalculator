@@ -60,6 +60,7 @@ void StateLabel::updateGridsAmount(int aValue)
 
 void StateLabel::updateStateText()
 {
+	bool isAllCorrect = false;
 	if (stateController.getUpperPrice() == 0.0)
 	{
 		setText("Enter upper price");
@@ -100,8 +101,16 @@ void StateLabel::updateStateText()
 	{
 		setText("Current price must be greater than Stop Loss price");
 	}
+	else if (stateController.getUpperPrice() / stateController.getLowerPrice()
+			 <= stateController.getBuyTax() + stateController.getSellTax())
+	{
+		setText("Profit without grids must be less than tax");
+	}
 	else
 	{
+		isAllCorrect = true;
+		emit gridsAmountSliderRangeChanged(0, stateController.updateMaxGridsAmount());
 		setText("Correct");
 	}
+	emit gridsAmountSliderEnableChanged(isAllCorrect);
 }

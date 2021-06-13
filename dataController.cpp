@@ -1,4 +1,4 @@
-#include "inputController.h"
+#include "dataController.h"
 #include "globalvariables.h"
 #include "cmath"
 #include "math.h"
@@ -14,70 +14,83 @@ double inputController::updateDoubleVariable(QString aString, double& aVariable)
 
 double inputController::updateUpperPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, upperPrice);
+	return updateDoubleVariable(aValue, inputData.upperPrice);
 }
 
 double inputController::updateCurrentPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, currentPrice);
+	return updateDoubleVariable(aValue, inputData.currentPrice);
 }
 
 double inputController::updateLowerPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, lowerPrice);
+	return updateDoubleVariable(aValue, inputData.lowerPrice);
 }
 
 double inputController::updateStopLossPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, stopLossPrice);
+	return updateDoubleVariable(aValue, inputData.stopLossPrice);
 }
 
 double inputController::updateBuyTax(QString aValue)
 {
-	return updateDoubleVariable(aValue, buyTax);
+	auto taxPercent = updateDoubleVariable(aValue, inputData.buyTax);
+	inputData.buyTax /= 100;
+	return taxPercent;
 }
 
 double inputController::updateSellTax(QString aValue)
 {
-	return updateDoubleVariable(aValue, sellTax);
+	auto taxPercent = updateDoubleVariable(aValue, inputData.sellTax);
+	inputData.sellTax /= 100;
+	return taxPercent;
 }
 
 void inputController::updateGridsAmount(int aValue)
 {
-	gridsAmount = aValue;
+	inputData.gridsAmount = aValue;
+}
+
+int inputController::updateMaxGridsAmount()
+{
+	auto logUpper = std::log2(inputData.upperPrice / inputData.lowerPrice);
+	auto logLower = std::log2(inputData.buyTax + inputData.sellTax + 1);
+	auto compare = logUpper / logLower - 1;
+	auto result = std::trunc(compare);
+	return result;
 }
 
 double inputController::getUpperPrice() const
 {
-	return upperPrice;
+	return inputData.upperPrice;
 }
 
 double inputController::getCurrentPrice() const
 {
-	return currentPrice;
+	return inputData.currentPrice;
 }
 
 double inputController::getLowerPrice() const
 {
-	return lowerPrice;
+	return inputData.lowerPrice;
 }
 
 double inputController::getStopLossPrice() const
 {
-	return stopLossPrice;
+	return inputData.stopLossPrice;
 }
 
 double inputController::getBuyTax() const
 {
-	return buyTax;
+	return inputData.buyTax;
 }
 
 double inputController::getSellTax() const
 {
-	return sellTax;
+	return inputData.sellTax;
 }
 
 int inputController::getGridsAmount() const
 {
-	return gridsAmount;
+	return inputData.gridsAmount;
 }

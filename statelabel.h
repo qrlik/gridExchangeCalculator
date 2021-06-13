@@ -2,7 +2,7 @@
 #define STATELABEL_H
 
 #include <QLabel>
-#include "inputController.h"
+#include "dataController.h"
 
 class StateLabel : public QLabel
 {
@@ -12,11 +12,10 @@ public slots:
 	void updateCurrentPrice(QString aValue);
 	void updateLowerPrice(QString aValue);
 	void updateStopLossPrice(QString aValue);
-
 	void updateBuyTax(QString aValue);
 	void updateSellTax(QString aValue);
-
 	void updateGridsAmount(int aValue);
+
 public:
 	StateLabel(QWidget* aParent = nullptr);
 	void setPrecision(int aPrecision);
@@ -26,9 +25,10 @@ signals:
 	void currentPriceChanged(QString);
 	void lowerPriceChanged(QString);
 	void stopLossPriceChanged(QString);
-
 	void buyTaxChanged(QString);
 	void sellTaxChanged(QString);
+	void gridsAmountSliderEnableChanged(bool);
+	void gridsAmountSliderRangeChanged(int, int);
 
 private:
 	void updateStateText();
