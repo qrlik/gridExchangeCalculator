@@ -771,16 +771,16 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="PositionProfitLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="PositionProfitLabel">
            <property name="text">
             <string>Position profit :</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="PositionProfitControl">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>
@@ -798,16 +798,16 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="GridProfitLayout">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="GridProfitLabel">
            <property name="text">
-            <string>One grid profit :</string>
+            <string>Grid profit :</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="GridProfitControl">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>
@@ -825,16 +825,16 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="TaxSpendingLayout">
          <item>
-          <widget class="QLabel" name="label_5">
+          <widget class="QLabel" name="TaxSpendingLabel">
            <property name="text">
             <string>Spending on tax :</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_6">
+          <widget class="QLabel" name="TaxSpendingControl">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>

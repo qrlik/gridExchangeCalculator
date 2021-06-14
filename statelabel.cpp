@@ -119,5 +119,10 @@ void StateLabel::update()
 void StateLabel::updateData()
 {
 	stateController.updateOutput();
-	emit gridsAmountSliderRangeChanged(0, stateController.getOutputData().maxGridsAmount);
+	const auto& outputData = stateController.getOutputData();
+
+	emit gridsAmountSliderRangeChanged(0, outputData.maxGridsAmount);
+	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));
+	emit positionProfitChanged(QString::number(outputData.positionProfit, 'f', precisionCrypto));
+	emit taxSpendingChanged(QString::number(outputData.spendingOnTax, 'f', precisionCrypto));
 }

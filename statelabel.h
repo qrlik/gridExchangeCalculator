@@ -30,6 +30,9 @@ signals:
 	void gridsAmountSliderEnableChanged(bool);
 	void gridsAmountSliderRangeChanged(int, int);
 
+	void gridProfitChanged(QString);
+	void positionProfitChanged(QString);
+	void taxSpendingChanged(QString);
 private:
 	void update();
 	void updateData();

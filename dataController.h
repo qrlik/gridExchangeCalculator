@@ -15,7 +15,10 @@ struct inputData {
 };
 
 struct outputData {
-	int maxGridsAmount = 0;
+    double gridProfit = 0.0;
+    double positionProfit = 0.0;
+    double spendingOnTax = 0.0;
+    int maxGridsAmount = 0;
 };
 
 class dataController : public QObject
@@ -40,6 +43,7 @@ public:
 private:
 	double updateDoubleVariable(QString aString, double& aVariable);
 	void updateMaxGridsAmount();
+	void updateProfitAndSpending();
 
 	inputData inputData;
 	outputData outputData;

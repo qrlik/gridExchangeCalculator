@@ -53,15 +53,24 @@ void dataController::updateGridsAmount(int aValue)
 
 void dataController::updateMaxGridsAmount()
 {
-	auto logUpper = std::log2(inputData.upperPrice / inputData.lowerPrice);
-	auto logLower = std::log2(inputData.buyTax + inputData.sellTax + 1);
+	auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
+	auto logLower = log2(inputData.buyTax + inputData.sellTax + 1);
 	auto compare = logUpper / logLower - 1;
-	outputData.maxGridsAmount = std::trunc(compare);
+	outputData.maxGridsAmount = trunc(compare);
+}
+
+void dataController::updateProfitAndSpending()
+{
+	auto exp = 1.0 / (inputData.gridsAmount + 1);
+	outputData.gridProfit = (pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100;
+	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
+	outputData.spendingOnTax = (inputData.buyTax + inputData.sellTax) / outputData.gridProfit * 100 * 100;
 }
 
 void dataController::updateOutput()
 {
 	updateMaxGridsAmount();
+	updateProfitAndSpending();
 }
 
 const inputData& dataController::getInputData() const

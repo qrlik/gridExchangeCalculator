@@ -62,6 +62,10 @@ void MainWindow::setupSignals()
 
 	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderEnableChanged(bool)), SLOT(setEnabled(bool)));
 	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderRangeChanged(int,int)), SLOT(setRange(int, int)));
+
+	ui->PositionProfitControl->connect(ui->inputInfoStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
+	ui->GridProfitControl->connect(ui->inputInfoStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
+	ui->TaxSpendingControl->connect(ui->inputInfoStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
 }
 
 void MainWindow::setupTax()
