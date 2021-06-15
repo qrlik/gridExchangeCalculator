@@ -62,9 +62,10 @@ void dataController::updateMaxGridsAmount()
 void dataController::updateProfitAndSpending()
 {
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	outputData.gridProfit = (pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100;
+	auto taxesInPercents = (inputData.buyTax + inputData.sellTax) * 100;
+	outputData.gridProfit = (pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
 	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
-	outputData.spendingOnTax = (inputData.buyTax + inputData.sellTax) / outputData.gridProfit * 100 * 100;
+	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;
 }
 
 void dataController::updateOutput()
