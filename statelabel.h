@@ -27,8 +27,8 @@ signals:
 	void stopLossPriceChanged(QString);
 	void buyTaxChanged(QString);
 	void sellTaxChanged(QString);
-	void gridsAmountSliderEnableChanged(bool);
-	void gridsAmountSliderRangeChanged(int, int);
+	void gridsAmountEnableChanged(bool);
+	void gridsAmountRangeChanged(int, int);
 
 	void gridProfitChanged(QString);
 	void positionProfitChanged(QString);

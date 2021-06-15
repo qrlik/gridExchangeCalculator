@@ -113,7 +113,7 @@ void StateLabel::update()
 		updateData();
 		setText("Correct");
 	}
-	emit gridsAmountSliderEnableChanged(isAllCorrect);
+	emit gridsAmountEnableChanged(isAllCorrect);
 }
 
 void StateLabel::updateData()
@@ -121,7 +121,7 @@ void StateLabel::updateData()
 	stateController.updateOutput();
 	const auto& outputData = stateController.getOutputData();
 
-	emit gridsAmountSliderRangeChanged(0, outputData.maxGridsAmount);
+	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
 	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));
 	emit positionProfitChanged(QString::number(outputData.positionProfit, 'f', precisionCrypto));
 	emit taxSpendingChanged(QString::number(outputData.spendingOnTax, 'f', precisionCrypto));

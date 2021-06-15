@@ -18,6 +18,9 @@ public:
 private slots:
 	void changeTaxInfo(int aValue);
 	void changePrecision(int aValue);
+	void changeGridsAmountEnabled(bool aEnabled);
+	void changeGridsAmountRange(int aMinimum, int aMaximum);
+	void changeGridsAmount(int aValue);
 
 private:
 	void setupSignals();

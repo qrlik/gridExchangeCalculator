@@ -465,6 +465,9 @@
          </item>
          <item>
           <widget class="QSlider" name="GridsAmountSlider">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="minimum">
             <number>0</number>
            </property>
@@ -482,6 +485,16 @@
            </property>
            <property name="tickInterval">
             <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="GridsAmountSpin">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -573,7 +586,7 @@
            <item>
             <widget class="QLabel" name="TaxBuyLabel">
              <property name="text">
-              <string>BUY :</string>
+              <string>BUY, % :</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -624,7 +637,7 @@
            <item>
             <widget class="QLabel" name="TaxSellLabel">
              <property name="text">
-              <string>SELL :</string>
+              <string>SELL, % :</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -737,7 +750,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="StateLabel" name="inputInfoStateLabel">
+        <widget class="StateLabel" name="dataStateLabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -775,7 +788,7 @@
          <item>
           <widget class="QLabel" name="PositionProfitLabel">
            <property name="text">
-            <string>Position profit :</string>
+            <string>Position profit, % :</string>
            </property>
           </widget>
          </item>
@@ -802,7 +815,7 @@
          <item>
           <widget class="QLabel" name="GridProfitLabel">
            <property name="text">
-            <string>Grid profit :</string>
+            <string>Grid profit, % :</string>
            </property>
           </widget>
          </item>
@@ -829,7 +842,7 @@
          <item>
           <widget class="QLabel" name="TaxSpendingLabel">
            <property name="text">
-            <string>Spending on tax :</string>
+            <string>Spending on tax, % :</string>
            </property>
           </widget>
          </item>

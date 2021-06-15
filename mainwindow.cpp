@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
 	setupSignals();
 	setupTax();
 	setupPrecision();
-	ui->GridsAmountSlider->setEnabled(false);
 
 	QApplication::setStyle(QStyleFactory::create("Fusion"));
 }
@@ -39,33 +38,53 @@ void MainWindow::setupMasks(QString aMask)
 
 void MainWindow::setupSignals()
 {
-	ui->inputInfoStateLabel->connect(ui->UpperPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateUpperPrice(QString)));
-	ui->UpperPriceControl->connect(ui->inputInfoStateLabel, SIGNAL(upperPriceChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->UpperPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateUpperPrice(QString)));
+	ui->UpperPriceControl->connect(ui->dataStateLabel, SIGNAL(upperPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->CurrentPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateCurrentPrice(QString)));
-	ui->CurrentPriceControl->connect(ui->inputInfoStateLabel, SIGNAL(currentPriceChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->CurrentPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateCurrentPrice(QString)));
+	ui->CurrentPriceControl->connect(ui->dataStateLabel, SIGNAL(currentPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->LowerPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateLowerPrice(QString)));
-	ui->LowerPriceControl->connect(ui->inputInfoStateLabel, SIGNAL(lowerPriceChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->LowerPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateLowerPrice(QString)));
+	ui->LowerPriceControl->connect(ui->dataStateLabel, SIGNAL(lowerPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->StopLossPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateStopLossPrice(QString)));
-	ui->StopLossPriceControl->connect(ui->inputInfoStateLabel, SIGNAL(stopLossPriceChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->StopLossPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateStopLossPrice(QString)));
+	ui->StopLossPriceControl->connect(ui->dataStateLabel, SIGNAL(stopLossPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->TaxBuyAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateBuyTax(QString)));
-	ui->TaxBuyControl->connect(ui->inputInfoStateLabel, SIGNAL(buyTaxChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->TaxBuyAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateBuyTax(QString)));
+	ui->TaxBuyControl->connect(ui->dataStateLabel, SIGNAL(buyTaxChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->TaxSellAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateSellTax(QString)));
-	ui->TaxSellControl->connect(ui->inputInfoStateLabel, SIGNAL(sellTaxChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->TaxSellAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateSellTax(QString)));
+	ui->TaxSellControl->connect(ui->dataStateLabel, SIGNAL(sellTaxChanged(QString)), SLOT(setText(QString)));
 
-	ui->inputInfoStateLabel->connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(updateGridsAmount(int)));
-	ui->GridsAmountTipLabel->connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(setNum(int)));
+	connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
+	connect(ui->GridsAmountSpin, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
 
-	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderEnableChanged(bool)), SLOT(setEnabled(bool)));
-	ui->GridsAmountSlider->connect(ui->inputInfoStateLabel, SIGNAL(gridsAmountSliderRangeChanged(int,int)), SLOT(setRange(int, int)));
+	connect(ui->dataStateLabel, SIGNAL(gridsAmountEnableChanged(bool)), SLOT(changeGridsAmountEnabled(bool)));
+	connect(ui->dataStateLabel, SIGNAL(gridsAmountRangeChanged(int,int)), SLOT(changeGridsAmountRange(int,int)));
 
-	ui->PositionProfitControl->connect(ui->inputInfoStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
-	ui->GridProfitControl->connect(ui->inputInfoStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
-	ui->TaxSpendingControl->connect(ui->inputInfoStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
+	ui->PositionProfitControl->connect(ui->dataStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
+	ui->GridProfitControl->connect(ui->dataStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
+	ui->TaxSpendingControl->connect(ui->dataStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
+}
+
+void MainWindow::changeGridsAmountEnabled(bool aEnabled)
+{
+	ui->GridsAmountSlider->setEnabled(aEnabled);
+	ui->GridsAmountSpin->setEnabled(aEnabled);
+}
+
+void MainWindow::changeGridsAmountRange(int aMinimum, int aMaximum)
+{
+	ui->GridsAmountSlider->setRange(aMinimum, aMaximum);
+	ui->GridsAmountSpin->setRange(aMinimum, aMaximum);
+}
+
+void MainWindow::changeGridsAmount(int aValue)
+{
+	ui->dataStateLabel->updateGridsAmount(aValue);
+	ui->GridsAmountTipLabel->setNum(aValue);
+	ui->GridsAmountSlider->setValue(aValue);
+	ui->GridsAmountSpin->setValue(aValue);
 }
 
 void MainWindow::setupTax()
@@ -130,11 +149,11 @@ void MainWindow::changePrecision(int aValue)
 	switch (aValue)
 	{
 	case 0:
-		ui->inputInfoStateLabel->setPrecision(precisionStocks);
+		ui->dataStateLabel->setPrecision(precisionStocks);
 		setupMasks(priceMaskStocks);
 		break;
 	case 1:
-		ui->inputInfoStateLabel->setPrecision(precisionCrypto);
+		ui->dataStateLabel->setPrecision(precisionCrypto);
 		setupMasks(priceMaskCrypt);
 		break;
 	}
