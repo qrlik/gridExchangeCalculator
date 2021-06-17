@@ -9,8 +9,7 @@ struct inputData {
 	double currentPrice = 0.0;
 	double lowerPrice = 0.0;
 	double stopLossPrice = 0.0;
-	double buyTax = 0.0;
-	double sellTax = 0.0;
+	double tax = 0.0;
 	int gridsAmount = 0;
 };
 
@@ -31,8 +30,7 @@ public:
 	double updateCurrentPrice(QString aValue);
 	double updateLowerPrice(QString aValue);
 	double updateStopLossPrice(QString aValue);
-	double updateBuyTax(QString aValue);
-	double updateSellTax(QString aValue);
+	double updateTax(QString aValue);
 	void updateGridsAmount(int aValue);
 
 	void updateOutput();

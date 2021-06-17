@@ -39,17 +39,10 @@ void StateLabel::updateStopLossPrice(QString aValue)
 	update();
 }
 
-void StateLabel::updateBuyTax(QString aValue)
+void StateLabel::updateTax(QString aValue)
 {
-	auto result = stateController.updateBuyTax(aValue);
-	emit buyTaxChanged(QString::number(result, 'f', precisionTax));
-	update();
-}
-
-void StateLabel::updateSellTax(QString aValue)
-{
-	auto result = stateController.updateSellTax(aValue);
-	emit sellTaxChanged(QString::number(result, 'f', precisionTax));
+	auto result = stateController.updateTax(aValue);
+	emit taxChanged(QString::number(result, 'f', precisionTax));
 	update();
 }
 
@@ -79,13 +72,9 @@ void StateLabel::update()
 	{
 		setText("Enter stop loss price");
 	}
-	else if (inputData.buyTax == 0.0)
+	else if (inputData.tax == 0.0)
 	{
-		setText("Enter buy tax");
-	}
-	else if (inputData.sellTax == 0.0)
-	{
-		setText("Enter sell tax");
+		setText("Enter tax");
 	}
 	else if (inputData.upperPrice <= inputData.lowerPrice)
 	{
@@ -103,7 +92,7 @@ void StateLabel::update()
 	{
 		setText("Current price must be greater than Stop Loss price");
 	}
-	else if (inputData.upperPrice / inputData.lowerPrice <= inputData.buyTax + inputData.sellTax)
+	else if (inputData.upperPrice / inputData.lowerPrice <= inputData.tax * 2)
 	{
 		setText("Profit without grids must be less than tax");
 	}

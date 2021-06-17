@@ -12,8 +12,7 @@ public slots:
 	void updateCurrentPrice(QString aValue);
 	void updateLowerPrice(QString aValue);
 	void updateStopLossPrice(QString aValue);
-	void updateBuyTax(QString aValue);
-	void updateSellTax(QString aValue);
+	void updateTax(QString aValue);
 	void updateGridsAmount(int aValue);
 
 public:
@@ -25,8 +24,7 @@ signals:
 	void currentPriceChanged(QString);
 	void lowerPriceChanged(QString);
 	void stopLossPriceChanged(QString);
-	void buyTaxChanged(QString);
-	void sellTaxChanged(QString);
+	void taxChanged(QString);
 	void gridsAmountEnableChanged(bool);
 	void gridsAmountRangeChanged(int, int);
 

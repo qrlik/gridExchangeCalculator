@@ -32,17 +32,10 @@ double dataController::updateStopLossPrice(QString aValue)
 	return updateDoubleVariable(aValue, inputData.stopLossPrice);
 }
 
-double dataController::updateBuyTax(QString aValue)
+double dataController::updateTax(QString aValue)
 {
-	auto taxPercent = updateDoubleVariable(aValue, inputData.buyTax);
-	inputData.buyTax /= 100;
-	return taxPercent;
-}
-
-double dataController::updateSellTax(QString aValue)
-{
-	auto taxPercent = updateDoubleVariable(aValue, inputData.sellTax);
-	inputData.sellTax /= 100;
+	auto taxPercent = updateDoubleVariable(aValue, inputData.tax);
+	inputData.tax /= 100;
 	return taxPercent;
 }
 
@@ -54,7 +47,7 @@ void dataController::updateGridsAmount(int aValue)
 void dataController::updateMaxGridsAmount()
 {
 	auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
-	auto logLower = log2(inputData.buyTax + inputData.sellTax + 1);
+	auto logLower = log2(inputData.tax * 2 + 1);
 	auto compare = logUpper / logLower - 1;
 	outputData.maxGridsAmount = trunc(compare);
 }
@@ -62,7 +55,7 @@ void dataController::updateMaxGridsAmount()
 void dataController::updateProfitAndSpending()
 {
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	auto taxesInPercents = (inputData.buyTax + inputData.sellTax) * 100;
+	auto taxesInPercents = inputData.tax * 2 * 100;
 	outputData.gridProfit = (pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
 	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
 	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;

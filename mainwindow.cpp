@@ -50,11 +50,8 @@ void MainWindow::setupSignals()
 	ui->dataStateLabel->connect(ui->StopLossPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateStopLossPrice(QString)));
 	ui->StopLossPriceControl->connect(ui->dataStateLabel, SIGNAL(stopLossPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->dataStateLabel->connect(ui->TaxBuyAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateBuyTax(QString)));
-	ui->TaxBuyControl->connect(ui->dataStateLabel, SIGNAL(buyTaxChanged(QString)), SLOT(setText(QString)));
-
-	ui->dataStateLabel->connect(ui->TaxSellAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateSellTax(QString)));
-	ui->TaxSellControl->connect(ui->dataStateLabel, SIGNAL(sellTaxChanged(QString)), SLOT(setText(QString)));
+	ui->dataStateLabel->connect(ui->TaxAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateTax(QString)));
+	ui->TaxControl->connect(ui->dataStateLabel, SIGNAL(taxChanged(QString)), SLOT(setText(QString)));
 
 	connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
 	connect(ui->GridsAmountSpin, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
@@ -89,11 +86,8 @@ void MainWindow::changeGridsAmount(int aValue)
 
 void MainWindow::setupTax()
 {
-	ui->TaxBuyAmountEdit->setInputMask(taxMask);
-	ui->TaxBuyAmountEdit->setText(taxMask);
-
-	ui->TaxSellAmountEdit->setInputMask(taxMask);
-	ui->TaxSellAmountEdit->setText(taxMask);
+	ui->TaxAmountEdit->setInputMask(taxMask);
+	ui->TaxAmountEdit->setText(taxMask);
 
 	auto* TaxComboBox = ui->TaxTypeBox;
 	TaxComboBox->addItem(QStringLiteral("Tinkoff Investments"));
@@ -106,29 +100,22 @@ void MainWindow::setupTax()
 
 void MainWindow::changeTaxInfo(int aValue)
 {
-	auto buyTaxEdit = ui->TaxBuyAmountEdit;
-	auto sellTaxEdit = ui->TaxSellAmountEdit;
+	auto taxEdit = ui->TaxAmountEdit;
 	auto commentString = QString();
 	switch (aValue)
 	{
 	case 0:
-		buyTaxEdit->setEnabled(false);
-		sellTaxEdit->setEnabled(false);
-		buyTaxEdit->setText(QStringLiteral("0.025"));
-		sellTaxEdit->setText(QStringLiteral("0.025"));
+		taxEdit->setEnabled(false);
+		taxEdit->setText(QStringLiteral("0.025"));
 		commentString = QStringLiteral("* minimum 0.01$ per share");
 		break;
 	case 1:
-		buyTaxEdit->setEnabled(false);
-		sellTaxEdit->setEnabled(false);
-		buyTaxEdit->setText(QStringLiteral("0.2"));
-		sellTaxEdit->setText(QStringLiteral("0.2"));
+		taxEdit->setEnabled(false);
+		taxEdit->setText(QStringLiteral("0.2"));
 		break;
 	case 2:
-		buyTaxEdit->setEnabled(true);
-		sellTaxEdit->setEnabled(true);
-		buyTaxEdit->setText(taxMask);
-		sellTaxEdit->setText(taxMask);
+		taxEdit->setEnabled(true);
+		taxEdit->setText(taxMask);
 		commentString = QStringLiteral("* dynamic tax only in Stock precision");
 	}
 	ui->TaxCommentLabel->setText(commentString);
