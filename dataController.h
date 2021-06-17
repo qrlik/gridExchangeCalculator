@@ -3,6 +3,7 @@
 
 #include "QFlag"
 #include "QObject"
+#include "QVector"
 
 struct inputData {
 	double upperPrice = 0.0;
@@ -14,6 +15,7 @@ struct inputData {
 };
 
 struct outputData {
+	QVector<double> grids;
     double gridProfit = 0.0;
     double positionProfit = 0.0;
     double spendingOnTax = 0.0;
@@ -42,6 +44,7 @@ private:
 	double updateDoubleVariable(QString aString, double& aVariable);
 	void updateMaxGridsAmount();
 	void updateProfitAndSpending();
+	void updateGrids();
 
 	inputData inputData;
 	outputData outputData;

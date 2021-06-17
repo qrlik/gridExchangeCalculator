@@ -61,10 +61,26 @@ void dataController::updateProfitAndSpending()
 	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;
 }
 
+void dataController::updateGrids()
+{
+	auto& gridsVector = outputData.grids;
+	const auto profitFactor = 1 + outputData.gridProfit / 100;
+	gridsVector.clear();
+	gridsVector.reserve(outputData.maxGridsAmount + 2);
+	gridsVector.resize(inputData.gridsAmount + 2);
+	gridsVector[0] = inputData.lowerPrice;
+	for(auto i = 0; i < inputData.gridsAmount; ++i)
+	{
+		gridsVector[i + 1] = gridsVector[i] * profitFactor;
+	}
+	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
+}
+
 void dataController::updateOutput()
 {
 	updateMaxGridsAmount();
 	updateProfitAndSpending();
+	updateGrids();
 }
 
 const inputData& dataController::getInputData() const
