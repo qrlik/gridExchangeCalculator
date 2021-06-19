@@ -28,6 +28,7 @@ signals:
 	void gridsAmountEnableChanged(bool);
 	void gridsAmountRangeChanged(int, int);
 
+	void taxRangeChanged(QString);
 	void gridProfitChanged(QString);
 	void positionProfitChanged(QString);
 	void taxSpendingChanged(QString);

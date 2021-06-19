@@ -14,7 +14,7 @@ struct inputData {
 	currency currentPrice = 0.0;
 	currency lowerPrice = 0.0;
 	currency stopLossPrice = 0.0;
-	factor tax = 0.0;
+	factor baseTax = 0.0;
 	int gridsAmount = 0;
 };
 
@@ -23,6 +23,8 @@ struct outputData {
 	percents gridProfit = 0.0;
 	percents positionProfit = 0.0;
 	percents spendingOnTax = 0.0;
+	factor lowerPriceTax = 0.0;
+	factor upperPriceTax = 0.0;
 	int maxGridsAmount = 0;
 };
 
@@ -48,6 +50,7 @@ public:
 
 private:
 	double updateDoubleVariable(QString aString, double& aVariable);
+	void updateTaxRange();
 	void updateMaxGridsAmount();
 	void updateProfitAndSpending();
 	void updateGrids();

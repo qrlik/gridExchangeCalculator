@@ -41,8 +41,8 @@ currency dataController::updateStopLossPrice(QString aValue)
 
 percents dataController::updateTax(QString aValue)
 {
-	auto taxPercent = updateDoubleVariable(aValue, inputData.tax);
-	inputData.tax /= 100;
+	auto taxPercent = updateDoubleVariable(aValue, inputData.baseTax);
+	inputData.baseTax /= 100;
 	return taxPercent;
 }
 
@@ -54,7 +54,7 @@ void dataController::updateGridsAmount(int aValue)
 void dataController::updateMaxGridsAmount()
 {
 	auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
-	auto logLower = log2(inputData.tax * 2 + 1);
+	auto logLower = log2(inputData.baseTax * 2 + 1);
 	auto compare = logUpper / logLower - 1;
 	outputData.maxGridsAmount = trunc(compare);
 }
@@ -62,7 +62,7 @@ void dataController::updateMaxGridsAmount()
 void dataController::updateProfitAndSpending()
 {
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	auto taxesInPercents = inputData.tax * 2 * 100;
+	auto taxesInPercents = inputData.baseTax * 2 * 100;
 	outputData.gridProfit = (std::pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
 	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
 	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;
@@ -83,24 +83,30 @@ void dataController::updateGrids()
 	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
 }
 
+void dataController::updateTaxRange()
+{
+	outputData.upperPriceTax = calculateTax(inputData.upperPrice).second;
+	outputData.lowerPriceTax = calculateTax(inputData.lowerPrice).second;
+}
+
 void dataController::updateOutput()
 {
+	updateTaxRange();
 	updateMaxGridsAmount();
 	updateProfitAndSpending();
 	updateGrids();
 }
 
-
 QPair<currency, factor> dataController::calculateTax(currency aPrice)
 {
 	currency minimumTaxAmount = 1.0 / std::pow(10, precision);
-	currency calculatedTax = myCeil(aPrice * inputData.tax, precision);
+	currency calculatedTax = myCeil(aPrice * inputData.baseTax, precision);
 	if (calculatedTax <= minimumTaxAmount)
 	{
 		return { minimumTaxAmount, myCeil(minimumTaxAmount / aPrice, precisionTax + 2) };
 	}
 	else {
-		return { calculatedTax, inputData.tax };
+		return { calculatedTax, inputData.baseTax };
 	}
 }
 

@@ -69,7 +69,7 @@ void StateLabel::update()
 	{
 		setText("Enter stop loss price");
 	}
-	else if (inputData.tax == 0.0)
+	else if (inputData.baseTax == 0.0)
 	{
 		setText("Enter tax");
 	}
@@ -89,7 +89,7 @@ void StateLabel::update()
 	{
 		setText("Current price must be greater than Stop Loss price");
 	}
-	else if (inputData.upperPrice / inputData.lowerPrice <= inputData.tax * 2)
+	else if (inputData.upperPrice / inputData.lowerPrice <= inputData.baseTax * 2)
 	{
 		setText("Profit without grids must be less than tax");
 	}
@@ -107,6 +107,9 @@ void StateLabel::updateData()
 	data.updateOutput();
 	const auto& outputData = data.getOutputData();
 
+	QString max = QString::number(outputData.lowerPriceTax * 100, 'f', precisionTax);
+	QString min = QString::number(outputData.upperPriceTax * 100, 'f', precisionTax);
+	emit taxRangeChanged(min + "% - " + max + "%");
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
 	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));
 	emit positionProfitChanged(QString::number(outputData.positionProfit, 'f', precisionCrypto));
