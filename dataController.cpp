@@ -4,6 +4,13 @@
 #include "math.h"
 #include "QtDebug"
 
+namespace {
+	double myCeil(double aValue, int aPrecision)
+	{
+		const auto tenFactor = std::pow(10, aPrecision);
+		return std::ceil(aValue * tenFactor) / tenFactor;
+	}
+}
 
 double dataController::updateDoubleVariable(QString aString, double& aVariable)
 {
@@ -12,27 +19,27 @@ double dataController::updateDoubleVariable(QString aString, double& aVariable)
 	return aVariable;
 }
 
-double dataController::updateUpperPrice(QString aValue)
+currency dataController::updateUpperPrice(QString aValue)
 {
 	return updateDoubleVariable(aValue, inputData.upperPrice);
 }
 
-double dataController::updateCurrentPrice(QString aValue)
+currency dataController::updateCurrentPrice(QString aValue)
 {
 	return updateDoubleVariable(aValue, inputData.currentPrice);
 }
 
-double dataController::updateLowerPrice(QString aValue)
+currency dataController::updateLowerPrice(QString aValue)
 {
 	return updateDoubleVariable(aValue, inputData.lowerPrice);
 }
 
-double dataController::updateStopLossPrice(QString aValue)
+currency dataController::updateStopLossPrice(QString aValue)
 {
 	return updateDoubleVariable(aValue, inputData.stopLossPrice);
 }
 
-double dataController::updateTax(QString aValue)
+percents dataController::updateTax(QString aValue)
 {
 	auto taxPercent = updateDoubleVariable(aValue, inputData.tax);
 	inputData.tax /= 100;
@@ -56,7 +63,7 @@ void dataController::updateProfitAndSpending()
 {
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
 	auto taxesInPercents = inputData.tax * 2 * 100;
-	outputData.gridProfit = (pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
+	outputData.gridProfit = (std::pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
 	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
 	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;
 }
@@ -83,6 +90,20 @@ void dataController::updateOutput()
 	updateGrids();
 }
 
+
+QPair<currency, factor> dataController::calculateTax(currency aPrice)
+{
+	currency minimumTaxAmount = 1.0 / std::pow(10, precision);
+	currency calculatedTax = myCeil(aPrice * inputData.tax, precision);
+	if (calculatedTax <= minimumTaxAmount)
+	{
+		return { minimumTaxAmount, myCeil(minimumTaxAmount / aPrice, precisionTax + 2) };
+	}
+	else {
+		return { calculatedTax, inputData.tax };
+	}
+}
+
 const inputData& dataController::getInputData() const
 {
 	return inputData;
@@ -91,4 +112,14 @@ const inputData& dataController::getInputData() const
 const outputData& dataController::getOutputData() const
 {
 	return outputData;
+}
+
+int dataController::getPrecision() const
+{
+	return precision;
+}
+
+void dataController::setPrecision(int aPrecision)
+{
+	precision = aPrecision;
 }

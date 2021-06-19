@@ -8,54 +8,54 @@ StateLabel::StateLabel(QWidget* aParent): QLabel(aParent)
 
 void StateLabel::setPrecision(int aPrecision)
 {
-	precision = aPrecision;
+	data.setPrecision(aPrecision);
 }
 
 void StateLabel::updateUpperPrice(QString aValue)
 {
-	auto result = stateController.updateUpperPrice(aValue);
-	emit upperPriceChanged(QString::number(result, 'f', precision));
+	auto result = data.updateUpperPrice(aValue);
+	emit upperPriceChanged(QString::number(result, 'f', data.getPrecision()));
 	update();
 }
 
 void StateLabel::updateCurrentPrice(QString aValue)
 {
-	auto result = stateController.updateCurrentPrice(aValue);
-	emit currentPriceChanged(QString::number(result, 'f', precision));
+	auto result = data.updateCurrentPrice(aValue);
+	emit currentPriceChanged(QString::number(result, 'f', data.getPrecision()));
 	update();
 }
 
 void StateLabel::updateLowerPrice(QString aValue)
 {
-	auto result = stateController.updateLowerPrice(aValue);
-	emit lowerPriceChanged(QString::number(result, 'f', precision));
+	auto result = data.updateLowerPrice(aValue);
+	emit lowerPriceChanged(QString::number(result, 'f', data.getPrecision()));
 	update();
 }
 
 void StateLabel::updateStopLossPrice(QString aValue)
 {
-	auto result = stateController.updateStopLossPrice(aValue);
-	emit stopLossPriceChanged(QString::number(result, 'f', precision));
+	auto result = data.updateStopLossPrice(aValue);
+	emit stopLossPriceChanged(QString::number(result, 'f', data.getPrecision()));
 	update();
 }
 
 void StateLabel::updateTax(QString aValue)
 {
-	auto result = stateController.updateTax(aValue);
-	emit taxChanged(QString::number(result, 'f', precisionTax));
+	auto result = data.updateTax(aValue);
+	emit taxChanged(QString::number(result, 'f', data.getPrecision()));
 	update();
 }
 
 void StateLabel::updateGridsAmount(int aValue)
 {
-	stateController.updateGridsAmount(aValue);
+	data.updateGridsAmount(aValue);
 	update();
 }
 
 void StateLabel::update()
 {
 	bool isAllCorrect = false;
-	const auto& inputData = stateController.getInputData();
+	const auto& inputData = data.getInputData();
 	if (inputData.upperPrice == 0.0)
 	{
 		setText("Enter upper price");
@@ -107,8 +107,8 @@ void StateLabel::update()
 
 void StateLabel::updateData()
 {
-	stateController.updateOutput();
-	const auto& outputData = stateController.getOutputData();
+	data.updateOutput();
+	const auto& outputData = data.getOutputData();
 
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
 	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));

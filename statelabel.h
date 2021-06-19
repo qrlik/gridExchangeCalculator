@@ -36,8 +36,7 @@ private:
 	void update();
 	void updateData();
 
-	dataController stateController;
-	int precision = 0;
+	dataController data;
 };
 
 #endif // STATELABEL_H

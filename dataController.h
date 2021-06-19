@@ -5,21 +5,25 @@
 #include "QObject"
 #include "QVector"
 
+using currency = double;
+using percents = double;
+using factor = double;
+
 struct inputData {
-	double upperPrice = 0.0;
-	double currentPrice = 0.0;
-	double lowerPrice = 0.0;
-	double stopLossPrice = 0.0;
-	double tax = 0.0;
+	currency upperPrice = 0.0;
+	currency currentPrice = 0.0;
+	currency lowerPrice = 0.0;
+	currency stopLossPrice = 0.0;
+	factor tax = 0.0;
 	int gridsAmount = 0;
 };
 
 struct outputData {
-	QVector<double> grids;
-    double gridProfit = 0.0;
-    double positionProfit = 0.0;
-    double spendingOnTax = 0.0;
-    int maxGridsAmount = 0;
+	QVector<currency> grids;
+	percents gridProfit = 0.0;
+	percents positionProfit = 0.0;
+	percents spendingOnTax = 0.0;
+	int maxGridsAmount = 0;
 };
 
 class dataController : public QObject
@@ -28,26 +32,30 @@ class dataController : public QObject
 public:
 	dataController() = default;
 
-	double updateUpperPrice(QString aValue);
-	double updateCurrentPrice(QString aValue);
-	double updateLowerPrice(QString aValue);
-	double updateStopLossPrice(QString aValue);
-	double updateTax(QString aValue);
+	currency updateUpperPrice(QString aValue);
+	currency updateCurrentPrice(QString aValue);
+	currency updateLowerPrice(QString aValue);
+	currency updateStopLossPrice(QString aValue);
+	percents updateTax(QString aValue);
 	void updateGridsAmount(int aValue);
 
 	void updateOutput();
 
 	const inputData& getInputData() const;
 	const outputData& getOutputData() const;
+	int getPrecision() const;
+	void setPrecision(int aPrecision);
 
 private:
 	double updateDoubleVariable(QString aString, double& aVariable);
 	void updateMaxGridsAmount();
 	void updateProfitAndSpending();
 	void updateGrids();
+	QPair<currency, factor> calculateTax(currency aPrice);
 
 	inputData inputData;
 	outputData outputData;
+	int precision = 0;
 };
 
 #endif // DATACONTROLLER_H
