@@ -12,13 +12,15 @@ SOURCES += \
     dataController.cpp \
     main.cpp \
     mainwindow.cpp \
-    statelabel.cpp
+    statelabel.cpp \
+    utils.cpp
 
 HEADERS += \
     dataController.h \
     globalvariables.h \
     mainwindow.h \
-    statelabel.h
+    statelabel.h \
+    utils.h
 
 FORMS += \
     mainwindow.ui

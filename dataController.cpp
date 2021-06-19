@@ -1,16 +1,6 @@
 #include "dataController.h"
 #include "globalvariables.h"
-#include "cmath"
-#include "math.h"
-#include "QtDebug"
-
-namespace {
-	double myCeil(double aValue, int aPrecision)
-	{
-		const auto tenFactor = std::pow(10, aPrecision);
-		return std::ceil(aValue * tenFactor) / tenFactor;
-	}
-}
+#include "utils.h"
 
 double dataController::updateDoubleVariable(QString aString, double& aVariable)
 {
@@ -104,11 +94,11 @@ void dataController::updateOutput()
 QPair<currency, factor> dataController::calculateTax(currency aPrice)
 {
 	currency minimumTaxAmount = 1.0 / std::pow(10, precision);
-	currency calculatedTax = myCeil(aPrice * inputData.baseTax, precision);
+	currency calculatedTax = utils::myCeil(aPrice * inputData.baseTax, precision);
 	if (calculatedTax <= minimumTaxAmount)
 	{
 		factor taxFactor = minimumTaxAmount / aPrice;
-		return { minimumTaxAmount, myCeil(taxFactor, precisionTax + 2) };
+		return { minimumTaxAmount, utils::myCeil(taxFactor, precisionTax + 2) };
 	}
 	else {
 		return { calculatedTax, inputData.baseTax };
