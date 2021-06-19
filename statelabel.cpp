@@ -114,4 +114,10 @@ void StateLabel::updateData()
 	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));
 	emit positionProfitChanged(QString::number(outputData.positionProfit, 'f', precisionCrypto));
 	emit taxSpendingChanged(QString::number(outputData.spendingOnTax, 'f', precisionCrypto));
+	QStringList gridsList;
+	for(auto grid : outputData.grids)
+	{
+		gridsList.append(QString::number(grid, 'f', 8));
+	}
+	emit gridsListChanged(gridsList);
 }
