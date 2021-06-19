@@ -62,7 +62,7 @@ void MainWindow::setupSignals()
 	ui->PositionProfitControl->connect(ui->dataStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
 	ui->GridProfitControl->connect(ui->dataStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
 	ui->TaxSpendingControl->connect(ui->dataStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
-	connect(ui->dataStateLabel, SIGNAL(gridsListChanged(QStringList)), SLOT(changeGridsList(QStringList)));
+	connect(ui->dataStateLabel, SIGNAL(gridsListChanged(const QVector<double>&)), SLOT(changeGridsList(const QVector<double>&)));
 }
 
 void MainWindow::changeGridsAmountEnabled(bool aEnabled)
@@ -85,10 +85,13 @@ void MainWindow::changeGridsAmount(int aValue)
 	ui->GridsAmountSpin->setValue(aValue);
 }
 
-void MainWindow::changeGridsList(const QStringList& aList)
+void MainWindow::changeGridsList(const QVector<double>& aList)
 {
 	ui->gridsList->clear();
-	ui->gridsList->addItems(aList);
+	for(auto gridAmount : aList)
+	{
+		ui->gridsList->addItem(QString::number(gridAmount, 'f', 8));
+	}
 }
 
 void MainWindow::setupTax()

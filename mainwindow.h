@@ -21,7 +21,7 @@ private slots:
 	void changeGridsAmountEnabled(bool aEnabled);
 	void changeGridsAmountRange(int aMinimum, int aMaximum);
 	void changeGridsAmount(int aValue);
-	void changeGridsList(const QStringList& aList);
+	void changeGridsList(const QVector<double>& aList);
 
 private:
 	void setupSignals();
