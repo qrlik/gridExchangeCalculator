@@ -11,39 +11,36 @@ void StateLabel::setPrecision(int aPrecision)
 	data.setPrecision(aPrecision);
 }
 
+void StateLabel::updateAndEmit(QString aValue, double(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString))
+{
+	auto result = (data.*aDataPtr)(aValue);
+	emit (this->*aThisPtr)(QString::number(result, 'f', data.getPrecision()));
+	update();
+}
+
 void StateLabel::updateUpperPrice(QString aValue)
 {
-	auto result = data.updateUpperPrice(aValue);
-	emit upperPriceChanged(QString::number(result, 'f', data.getPrecision()));
-	update();
+	updateAndEmit(aValue, &dataController::updateUpperPrice, &StateLabel::upperPriceChanged);
 }
 
 void StateLabel::updateCurrentPrice(QString aValue)
 {
-	auto result = data.updateCurrentPrice(aValue);
-	emit currentPriceChanged(QString::number(result, 'f', data.getPrecision()));
-	update();
+	updateAndEmit(aValue, &dataController::updateCurrentPrice, &StateLabel::currentPriceChanged);
 }
 
 void StateLabel::updateLowerPrice(QString aValue)
 {
-	auto result = data.updateLowerPrice(aValue);
-	emit lowerPriceChanged(QString::number(result, 'f', data.getPrecision()));
-	update();
+	updateAndEmit(aValue, &dataController::updateLowerPrice, &StateLabel::lowerPriceChanged);
 }
 
 void StateLabel::updateStopLossPrice(QString aValue)
 {
-	auto result = data.updateStopLossPrice(aValue);
-	emit stopLossPriceChanged(QString::number(result, 'f', data.getPrecision()));
-	update();
+	updateAndEmit(aValue, &dataController::updateStopLossPrice, &StateLabel::stopLossPriceChanged);
 }
 
 void StateLabel::updateTax(QString aValue)
 {
-	auto result = data.updateTax(aValue);
-	emit taxChanged(QString::number(result, 'f', data.getPrecision()));
-	update();
+	updateAndEmit(aValue, &dataController::updateTax, &StateLabel::taxChanged);
 }
 
 void StateLabel::updateGridsAmount(int aValue)
