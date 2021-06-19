@@ -53,9 +53,11 @@ void dataController::updateGridsAmount(int aValue)
 
 void dataController::updateMaxGridsAmount()
 {
-	auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
-	auto logLower = log2(outputData.lowerPriceTax * 2 + 1);
-	auto compare = logUpper / logLower - 1;
+	const currency minProfitAmount = 1.0 / std::pow(10, precision);
+	const factor minProfitForLowerPrice = minProfitAmount / inputData.lowerPrice;
+	const auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
+	const auto logLower = log2(outputData.lowerPriceTax * 2 + minProfitForLowerPrice + 1);
+	const auto compare = logUpper / logLower - 1;
 	outputData.maxGridsAmount = trunc(compare);
 }
 
@@ -65,7 +67,7 @@ void dataController::updateProfitAndSpending()
 	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
 
 	// add range and check
-	auto taxesInPercents = inputData.baseTax * 2 * 100; // range
+	percents taxesInPercents = inputData.baseTax * 2 * 100; // range
 	outputData.gridProfit = (outputData.gridFactor - 1) * 100 - taxesInPercents; // range
 	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1); // range
 	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100; // range
@@ -105,7 +107,8 @@ QPair<currency, factor> dataController::calculateTax(currency aPrice)
 	currency calculatedTax = myCeil(aPrice * inputData.baseTax, precision);
 	if (calculatedTax <= minimumTaxAmount)
 	{
-		return { minimumTaxAmount, myCeil(minimumTaxAmount / aPrice, precisionTax + 2) };
+		factor taxFactor = minimumTaxAmount / aPrice;
+		return { minimumTaxAmount, myCeil(taxFactor, precisionTax + 2) };
 	}
 	else {
 		return { calculatedTax, inputData.baseTax };
