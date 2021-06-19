@@ -1,5 +1,6 @@
 #include "statelabel.h"
 #include "globalvariables.h"
+#include "utils.h"
 
 StateLabel::StateLabel(QWidget* aParent): QLabel(aParent)
 {
@@ -106,9 +107,8 @@ void StateLabel::updateData()
 {
 	data.updateOutput();
 	const auto& outputData = data.getOutputData();
-
-	QString max = QString::number(outputData.lowerPriceTax * 100, 'f', precisionTax);
-	QString min = QString::number(outputData.upperPriceTax * 100, 'f', precisionTax);
+	QString max = QString::number(utils::myCeil(outputData.lowerPriceTax * 100, precisionTax), 'f', precisionTax);
+	QString min = QString::number(utils::myCeil(outputData.upperPriceTax * 100, precisionTax), 'f', precisionTax);
 	emit taxRangeChanged(min + "% - " + max + "%");
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
 	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));

@@ -97,8 +97,7 @@ QPair<currency, factor> dataController::calculateTax(currency aPrice)
 	currency calculatedTax = utils::myCeil(aPrice * inputData.baseTax, precision);
 	if (calculatedTax <= minimumTaxAmount)
 	{
-		factor taxFactor = minimumTaxAmount / aPrice;
-		return { minimumTaxAmount, utils::myCeil(taxFactor, precisionTax + 2) };
+		return { minimumTaxAmount, minimumTaxAmount / aPrice };
 	}
 	else {
 		return { calculatedTax, inputData.baseTax };
