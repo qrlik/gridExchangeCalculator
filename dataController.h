@@ -20,6 +20,7 @@ struct inputData {
 
 struct outputData {
 	QVector<currency> grids;
+	factor gridFactor = 0.0;
 	percents gridProfit = 0.0;
 	percents positionProfit = 0.0;
 	percents spendingOnTax = 0.0;

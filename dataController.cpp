@@ -54,7 +54,7 @@ void dataController::updateGridsAmount(int aValue)
 void dataController::updateMaxGridsAmount()
 {
 	auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
-	auto logLower = log2(inputData.baseTax * 2 + 1);
+	auto logLower = log2(outputData.lowerPriceTax * 2 + 1);
 	auto compare = logUpper / logLower - 1;
 	outputData.maxGridsAmount = trunc(compare);
 }
@@ -62,23 +62,25 @@ void dataController::updateMaxGridsAmount()
 void dataController::updateProfitAndSpending()
 {
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	auto taxesInPercents = inputData.baseTax * 2 * 100;
-	outputData.gridProfit = (std::pow(inputData.upperPrice / inputData.lowerPrice, exp) - 1) * 100 - taxesInPercents;
-	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1);
-	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100;
+	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+
+	// add range and check
+	auto taxesInPercents = inputData.baseTax * 2 * 100; // range
+	outputData.gridProfit = (outputData.gridFactor - 1) * 100 - taxesInPercents; // range
+	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1); // range
+	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100; // range
 }
 
 void dataController::updateGrids()
 {
 	auto& gridsVector = outputData.grids;
-	const auto profitFactor = 1 + outputData.gridProfit / 100;
 	gridsVector.clear();
 	gridsVector.reserve(outputData.maxGridsAmount + 2);
 	gridsVector.resize(inputData.gridsAmount + 2);
 	gridsVector[0] = inputData.lowerPrice;
 	for(auto i = 0; i < inputData.gridsAmount; ++i)
 	{
-		gridsVector[i + 1] = gridsVector[i] * profitFactor;
+		gridsVector[i + 1] = gridsVector[i] * outputData.gridFactor;
 	}
 	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
 }
