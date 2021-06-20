@@ -21,11 +21,13 @@ struct inputData {
 struct outputData {
 	QVector<currency> grids;
 	factor gridFactor = 0.0;
-	percents gridProfit = 0.0;
-	percents positionProfit = 0.0;
-	percents spendingOnTax = 0.0;
-	factor lowerPriceTax = 0.0;
-	factor upperPriceTax = 0.0;
+	//percents gridProfit = 0.0;
+	//percents positionProfit = 0.0;
+	//percents spendingOnTax = 0.0;
+	QPair<factor, factor> taxRange = { 0.0, 0.0 }; // max(lower price), min(upper price)
+	QPair<percents, percents> gridProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
+	QPair<percents, percents> positionProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
+	QPair<percents, percents> spengindOnTaxRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
 	int maxGridsAmount = 0;
 };
 

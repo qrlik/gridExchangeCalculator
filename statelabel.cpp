@@ -107,12 +107,23 @@ void StateLabel::updateData()
 {
 	data.updateOutput();
 	const auto& outputData = data.getOutputData();
-	QString max = QString::number(utils::myCeil(outputData.lowerPriceTax * 100, precisionTax), 'f', precisionTax);
-	QString min = QString::number(utils::myCeil(outputData.upperPriceTax * 100, precisionTax), 'f', precisionTax);
-	emit taxRangeChanged(min + "% - " + max + "%");
+	QString minTax = QString::number(utils::myCeil(outputData.taxRange.second * 100, precisionTax), 'f', precisionTax);
+	QString maxTax = QString::number(utils::myCeil(outputData.taxRange.first * 100, precisionTax), 'f', precisionTax);
+	bool isRanged = minTax != maxTax;
+	emit taxRangeChanged((isRanged) ? (minTax + "% - " + maxTax + "%") : maxTax + "%");
+
+	QString minProfit = QString::number(utils::myCeil(outputData.gridProfitRange.first, precisionTax), 'f', precisionTax);
+	QString maxProfit = QString::number(utils::myCeil(outputData.gridProfitRange.second, precisionTax), 'f', precisionTax);
+	emit gridProfitChanged((isRanged) ? (minProfit + "% - " + maxProfit + "%") : maxProfit + "%");
+
+	QString minPosition = QString::number(utils::myCeil(outputData.positionProfitRange.first, 6), 'f', 6);
+	QString maxPosition = QString::number(utils::myCeil(outputData.positionProfitRange.second, 6), 'f', 6);
+	emit positionProfitChanged((isRanged) ? (minPosition + "% - " + maxPosition + "%") : maxPosition + "%");
+
+	QString minTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.second, precisionTax), 'f', precisionTax);
+	QString maxTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.first, precisionTax), 'f', precisionTax);
+	emit taxSpendingChanged((isRanged) ? (minTaxSpending + "% - " + maxTaxSpending + "%") : maxTaxSpending + "%");
+
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
-	emit gridProfitChanged(QString::number(outputData.gridProfit, 'f', precisionCrypto));
-	emit positionProfitChanged(QString::number(outputData.positionProfit, 'f', precisionCrypto));
-	emit taxSpendingChanged(QString::number(outputData.spendingOnTax, 'f', precisionCrypto));
 	emit gridsListChanged(outputData.grids);
 }

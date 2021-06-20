@@ -88,10 +88,10 @@ void MainWindow::changeGridsAmount(int aValue)
 
 void MainWindow::changeGridsList(const QVector<double>& aList)
 {
-	ui->gridsList->clear();
+	ui->GridsList->clear();
 	for(auto gridAmount : aList)
 	{
-		ui->gridsList->addItem(QString::number(gridAmount, 'f', 8));
+		ui->GridsList->addItem(QString::number(gridAmount, 'f', 8));
 	}
 }
 

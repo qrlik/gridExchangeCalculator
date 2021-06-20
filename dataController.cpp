@@ -46,9 +46,9 @@ void dataController::updateMaxGridsAmount()
 	const currency minProfitAmount = 1.0 / std::pow(10, precision);
 	const factor minProfitForLowerPrice = minProfitAmount / inputData.lowerPrice;
 	const auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
-	const auto logLower = log2(outputData.lowerPriceTax * 2 + minProfitForLowerPrice + 1);
+	const auto logLower = log2(outputData.taxRange.first * 2 + minProfitForLowerPrice + 1);
 	const auto compare = logUpper / logLower - 1;
-	outputData.maxGridsAmount = trunc(compare);
+	outputData.maxGridsAmount = std::trunc(compare);
 }
 
 void dataController::updateProfitAndSpending()
@@ -56,11 +56,14 @@ void dataController::updateProfitAndSpending()
 	auto exp = 1.0 / (inputData.gridsAmount + 1);
 	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
 
-	// add range and check
-	percents taxesInPercents = inputData.baseTax * 2 * 100; // range
-	outputData.gridProfit = (outputData.gridFactor - 1) * 100 - taxesInPercents; // range
-	outputData.positionProfit = outputData.gridProfit / (inputData.gridsAmount + 1); // range
-	outputData.spendingOnTax = taxesInPercents / (outputData.gridProfit + taxesInPercents) * 100; // range
+	outputData.gridProfitRange.first = (outputData.gridFactor - outputData.taxRange.first * 2 - 1) * 100;
+	outputData.gridProfitRange.second = (outputData.gridFactor - outputData.taxRange.second * 2 - 1) * 100;
+
+	outputData.positionProfitRange.first = outputData.gridProfitRange.first / (inputData.gridsAmount + 1);
+	outputData.positionProfitRange.second = outputData.gridProfitRange.second / (inputData.gridsAmount + 1);
+
+	outputData.spengindOnTaxRange.first = outputData.taxRange.first * 2 / (outputData.gridFactor - 1) * 100;
+	outputData.spengindOnTaxRange.second = outputData.taxRange.second * 2 / (outputData.gridFactor - 1) * 100;
 }
 
 void dataController::updateGrids()
@@ -79,8 +82,8 @@ void dataController::updateGrids()
 
 void dataController::updateTaxRange()
 {
-	outputData.upperPriceTax = calculateTax(inputData.upperPrice).second;
-	outputData.lowerPriceTax = calculateTax(inputData.lowerPrice).second;
+	outputData.taxRange.first = calculateTax(inputData.lowerPrice).second;
+	outputData.taxRange.second = calculateTax(inputData.upperPrice).second;
 }
 
 void dataController::updateOutput()
