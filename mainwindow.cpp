@@ -38,32 +38,33 @@ void MainWindow::setupMasks(QString aMask)
 
 void MainWindow::setupSignals()
 {
-	ui->dataStateLabel->connect(ui->UpperPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateUpperPrice(QString)));
-	ui->UpperPriceControl->connect(ui->dataStateLabel, SIGNAL(upperPriceChanged(QString)), SLOT(setText(QString)));
+	ui->DataStateLabel->connect(ui->UpperPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateUpperPrice(QString)));
+	ui->UpperPriceControl->connect(ui->DataStateLabel, SIGNAL(upperPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->dataStateLabel->connect(ui->CurrentPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateCurrentPrice(QString)));
-	ui->CurrentPriceControl->connect(ui->dataStateLabel, SIGNAL(currentPriceChanged(QString)), SLOT(setText(QString)));
+	ui->DataStateLabel->connect(ui->CurrentPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateCurrentPrice(QString)));
+	ui->CurrentPriceControl->connect(ui->DataStateLabel, SIGNAL(currentPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->dataStateLabel->connect(ui->LowerPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateLowerPrice(QString)));
-	ui->LowerPriceControl->connect(ui->dataStateLabel, SIGNAL(lowerPriceChanged(QString)), SLOT(setText(QString)));
+	ui->DataStateLabel->connect(ui->LowerPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateLowerPrice(QString)));
+	ui->LowerPriceControl->connect(ui->DataStateLabel, SIGNAL(lowerPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->dataStateLabel->connect(ui->StopLossPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateStopLossPrice(QString)));
-	ui->StopLossPriceControl->connect(ui->dataStateLabel, SIGNAL(stopLossPriceChanged(QString)), SLOT(setText(QString)));
+	ui->DataStateLabel->connect(ui->StopLossPriceEdit, SIGNAL(textChanged(QString)), SLOT(updateStopLossPrice(QString)));
+	ui->StopLossPriceControl->connect(ui->DataStateLabel, SIGNAL(stopLossPriceChanged(QString)), SLOT(setText(QString)));
 
-	ui->dataStateLabel->connect(ui->TaxAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateTax(QString)));
-	ui->TaxControl->connect(ui->dataStateLabel, SIGNAL(taxChanged(QString)), SLOT(setText(QString)));
+	ui->DataStateLabel->connect(ui->TaxAmountEdit, SIGNAL(textChanged(QString)), SLOT(updateTax(QString)));
+	ui->TaxControl->connect(ui->DataStateLabel, SIGNAL(taxChanged(QString)), SLOT(setText(QString)));
 
 	connect(ui->GridsAmountSlider, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
 	connect(ui->GridsAmountSpin, SIGNAL(valueChanged(int)), SLOT(changeGridsAmount(int)));
 
-	connect(ui->dataStateLabel, SIGNAL(gridsAmountEnableChanged(bool)), SLOT(changeGridsAmountEnabled(bool)));
-	connect(ui->dataStateLabel, SIGNAL(gridsAmountRangeChanged(int,int)), SLOT(changeGridsAmountRange(int,int)));
+	connect(ui->DataStateLabel, SIGNAL(gridsAmountEnableChanged(bool)), SLOT(changeGridsAmountEnabled(bool)));
+	connect(ui->DataStateLabel, SIGNAL(gridsAmountRangeChanged(int,int)), SLOT(changeGridsAmountRange(int,int)));
 
-	ui->TaxRangeControl->connect(ui->dataStateLabel, SIGNAL(taxRangeChanged(QString)), SLOT(setText(QString)));
-	ui->PositionProfitControl->connect(ui->dataStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
-	ui->GridProfitControl->connect(ui->dataStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
-	ui->TaxSpendingControl->connect(ui->dataStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
-	connect(ui->dataStateLabel, SIGNAL(gridsListChanged(const QVector<double>&)), SLOT(changeGridsList(const QVector<double>&)));
+	ui->TaxRangeControl->connect(ui->DataStateLabel, SIGNAL(taxRangeChanged(QString)), SLOT(setText(QString)));
+	ui->PositionProfitControl->connect(ui->DataStateLabel, SIGNAL(positionProfitChanged(QString)), SLOT(setText(QString)));
+	ui->GridProfitControl->connect(ui->DataStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
+	ui->TaxSpendingControl->connect(ui->DataStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
+	ui->MinPositionControl->connect(ui->DataStateLabel, SIGNAL(minPositionChanged(QString)), SLOT(setText(QString)));
+	connect(ui->DataStateLabel, SIGNAL(gridsListChanged(const QVector<double>&)), SLOT(changeGridsList(const QVector<double>&)));
 }
 
 void MainWindow::changeGridsAmountEnabled(bool aEnabled)
@@ -80,7 +81,7 @@ void MainWindow::changeGridsAmountRange(int aMinimum, int aMaximum)
 
 void MainWindow::changeGridsAmount(int aValue)
 {
-	ui->dataStateLabel->updateGridsAmount(aValue);
+	ui->DataStateLabel->updateGridsAmount(aValue);
 	ui->GridsAmountTipLabel->setNum(aValue);
 	ui->GridsAmountSlider->setValue(aValue);
 	ui->GridsAmountSpin->setValue(aValue);
@@ -147,11 +148,11 @@ void MainWindow::changePrecision(int aValue)
 	switch (aValue)
 	{
 	case 0:
-		ui->dataStateLabel->setPrecision(precisionStocks);
+		ui->DataStateLabel->setPrecision(precisionStocks);
 		setupMasks(priceMaskStocks);
 		break;
 	case 1:
-		ui->dataStateLabel->setPrecision(precisionCrypto);
+		ui->DataStateLabel->setPrecision(precisionCrypto);
 		setupMasks(priceMaskCrypt);
 		break;
 	}

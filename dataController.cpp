@@ -72,10 +72,12 @@ void dataController::updateGrids()
 	gridsVector.clear();
 	gridsVector.reserve(outputData.maxGridsAmount + 2);
 	gridsVector.resize(inputData.gridsAmount + 2);
+	outputData.minPosition = inputData.lowerPrice;
 	gridsVector[0] = inputData.lowerPrice;
 	for(auto i = 0; i < inputData.gridsAmount; ++i)
 	{
 		gridsVector[i + 1] = gridsVector[i] * outputData.gridFactor;
+		outputData.minPosition += gridsVector[i + 1];
 	}
 	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
 }

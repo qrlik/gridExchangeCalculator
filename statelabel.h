@@ -33,6 +33,7 @@ signals:
 	void positionProfitChanged(QString);
 	void taxSpendingChanged(QString);
 	void gridsListChanged(const QVector<double>&);
+	void minPositionChanged(QString);
 private:
 	void update();
 	void updateData();
