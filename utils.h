@@ -6,6 +6,7 @@ class utils
 {
 public:
 	static double myCeil(double aValue, int aPrecision);
+	static double myTrunc(double aValue, int aPrecision);
 };
 
 #endif // UTILS_H

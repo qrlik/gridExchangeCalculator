@@ -92,9 +92,6 @@ void dataController::updateMaxGridsAmount()
 
 void dataController::updateProfitAndSpending()
 {
-	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
-
 	outputData.gridProfitRange.first = (outputData.gridFactor - outputData.taxRange.first * 2 - 1) * 100;
 	outputData.gridProfitRange.second = (outputData.gridFactor - outputData.taxRange.second * 2 - 1) * 100;
 
@@ -107,6 +104,9 @@ void dataController::updateProfitAndSpending()
 
 void dataController::updateGrids()
 {
+	auto exp = 1.0 / (inputData.gridsAmount + 1);
+	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+
 	auto& gridsVector = outputData.grids;
 	gridsVector.clear();
 	gridsVector.reserve(outputData.maxGridsAmount + 2);
@@ -115,7 +115,7 @@ void dataController::updateGrids()
 	gridsVector[0] = inputData.lowerPrice;
 	for(auto i = 0; i < inputData.gridsAmount; ++i)
 	{
-		gridsVector[i + 1] = gridsVector[i] * outputData.gridFactor;
+		gridsVector[i + 1] = utils::myTrunc(gridsVector[i] * outputData.gridFactor, precision);
 		outputData.minPosition += gridsVector[i + 1];
 	}
 	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
@@ -131,8 +131,8 @@ void dataController::updateOutput()
 {
 	updateTaxRange();
 	updateMaxGridsAmount();
-	updateProfitAndSpending();
 	updateGrids();
+	updateProfitAndSpending();
 }
 
 QPair<currency, factor> dataController::calculateTax(currency aPrice)

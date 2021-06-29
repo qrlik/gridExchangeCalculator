@@ -92,7 +92,7 @@ void MainWindow::changeGridsList(const QVector<double>& aList)
 	ui->GridsList->clear();
 	for(auto gridAmount : aList)
 	{
-		ui->GridsList->addItem(QString::number(gridAmount, 'f', 8));
+		ui->GridsList->addItem(QString::number(gridAmount, 'f', ui->DataStateLabel->getPrecision()));
 	}
 }
 

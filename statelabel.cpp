@@ -12,6 +12,11 @@ void StateLabel::setPrecision(int aPrecision)
 	data.setPrecision(aPrecision);
 }
 
+int StateLabel::getPrecision() const
+{
+	return data.getPrecision();
+}
+
 void StateLabel::updateAndEmit(QString aValue, double(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString))
 {
 	auto result = (data.*aDataPtr)(aValue);

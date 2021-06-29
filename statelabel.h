@@ -18,6 +18,7 @@ public slots:
 public:
 	StateLabel(QWidget* aParent = nullptr);
 	void setPrecision(int aPrecision);
+	int getPrecision() const;
 
 signals:
 	void upperPriceChanged(QString);
