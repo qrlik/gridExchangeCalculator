@@ -33,7 +33,7 @@ class dataController : public QObject
 {
 	Q_OBJECT
 public:
-	dataController() = default;
+	dataController();
 
 	currency updateUpperPrice(QString aValue);
 	currency updateCurrentPrice(QString aValue);
@@ -56,6 +56,9 @@ private:
 	void updateProfitAndSpending();
 	void updateGrids();
 	QPair<currency, factor> calculateTax(currency aPrice);
+#ifdef QT_DEBUG
+	void testTax();
+#endif
 
 	inputData inputData;
 	outputData outputData;

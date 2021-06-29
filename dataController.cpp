@@ -2,6 +2,45 @@
 #include "globalvariables.h"
 #include "utils.h"
 
+namespace
+{
+#ifdef QT_DEBUG
+	std::unordered_map<double, double> taxTestData
+	{
+		{ 1.0, 0.01 },
+		{ 5.0, 0.01 },
+		{ 10.0, 0.01 },
+		{ 20.0, 0.01 },
+		{ 20.01, 0.02 },
+		{ 40.01, 0.03 },
+		{ 60.01, 0.04 },
+		{ 80.01, 0.05 },
+		{ 100.01, 0.06 }
+	};
+#endif
+}
+
+dataController::dataController()
+{
+#ifdef QT_DEBUG
+	testTax();
+#endif
+}
+
+#ifdef QT_DEBUG
+void dataController::testTax()
+{
+	precision = 2;
+	inputData.baseTax = 0.0005;
+	for(auto [price, tax] :taxTestData){
+		auto calculatedTax = calculateTax(price).first;
+		assert(calculatedTax == tax);
+	}
+	precision = 0;
+	inputData.baseTax = 0.0;
+}
+#endif
+
 double dataController::updateDoubleVariable(QString aString, double& aVariable)
 {
 	bool success = false;
