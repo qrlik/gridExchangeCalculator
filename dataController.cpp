@@ -144,7 +144,7 @@ QPair<currency, factor> dataController::calculateTax(currency aPrice)
 		return { minimumTaxAmount, minimumTaxAmount / aPrice };
 	}
 	else {
-		return { calculatedTax, inputData.baseTax };
+		return { calculatedTax, calculatedTax / aPrice };
 	}
 }
 
