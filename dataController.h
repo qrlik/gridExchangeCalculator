@@ -24,7 +24,6 @@ struct outputData {
 	QPair<percents, percents> gridProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
 	QPair<percents, percents> positionProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
 	QPair<percents, percents> spengindOnTaxRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
-	factor gridFactor = 0.0;
 	currency minPosition = 0.0;
 	int maxGridsAmount = 0;
 };

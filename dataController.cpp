@@ -5,7 +5,7 @@
 namespace
 {
 #ifdef QT_DEBUG
-	std::unordered_map<double, double> taxTestData
+	const std::unordered_map<double, double> taxTestData
 	{
 		{ 1.0, 0.01 },
 		{ 5.0, 0.01 },
@@ -92,20 +92,29 @@ void dataController::updateMaxGridsAmount()
 
 void dataController::updateProfitAndSpending()
 {
-	outputData.gridProfitRange.first = (outputData.gridFactor - outputData.taxRange.first * 2 - 1) * 100;
-	outputData.gridProfitRange.second = (outputData.gridFactor - outputData.taxRange.second * 2 - 1) * 100;
+	const percents lowerGridPercents = (outputData.grids[1] / outputData.grids[0] - 1) * 100;
+	const currency lowerGridDiff = outputData.grids[1] - outputData.grids[0];
+	const currency lowerGridProfit = lowerGridDiff - calculateTax(outputData.grids[1]).first
+									 - calculateTax(outputData.grids[0]).first;
+	outputData.gridProfitRange.first = lowerGridPercents * lowerGridProfit / lowerGridDiff;
+	const auto lastIndex = outputData.grids.size() - 1;
+	const percents upperGridPercents = (outputData.grids[lastIndex] / outputData.grids[lastIndex - 1] - 1) * 100;
+	const currency upperGridDiff = outputData.grids[lastIndex] - outputData.grids[lastIndex - 1];
+	const currency upperGridProfit = upperGridDiff - calculateTax(outputData.grids[lastIndex]).first
+									 - calculateTax(outputData.grids[lastIndex - 1]).first;
+	outputData.gridProfitRange.second = upperGridPercents * upperGridProfit / upperGridDiff;
 
 	outputData.positionProfitRange.first = outputData.gridProfitRange.first / (inputData.gridsAmount + 1);
 	outputData.positionProfitRange.second = outputData.gridProfitRange.second / (inputData.gridsAmount + 1);
 
-	outputData.spengindOnTaxRange.first = outputData.taxRange.first * 2 / (outputData.gridFactor - 1) * 100;
-	outputData.spengindOnTaxRange.second = outputData.taxRange.second * 2 / (outputData.gridFactor - 1) * 100;
+	outputData.spengindOnTaxRange.first = (lowerGridDiff - lowerGridProfit) / lowerGridDiff * 100;
+	outputData.spengindOnTaxRange.second = (upperGridDiff - upperGridProfit) / upperGridDiff * 100;
 }
 
 void dataController::updateGrids()
 {
-	auto exp = 1.0 / (inputData.gridsAmount + 1);
-	outputData.gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+	const auto exp = 1.0 / (inputData.gridsAmount + 1);
+	const factor gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
 
 	auto& gridsVector = outputData.grids;
 	gridsVector.clear();
@@ -115,10 +124,14 @@ void dataController::updateGrids()
 	gridsVector[0] = inputData.lowerPrice;
 	for(auto i = 0; i < inputData.gridsAmount; ++i)
 	{
-		gridsVector[i + 1] = utils::myTrunc(gridsVector[i] * outputData.gridFactor, precision);
+		gridsVector[i + 1] = gridsVector[i] * gridFactor;
 		outputData.minPosition += gridsVector[i + 1];
 	}
 	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
+	for(auto& gridAmount : gridsVector)
+	{
+		gridAmount = utils::myTrunc(gridAmount, precision);
+	}
 }
 
 void dataController::updateTaxRange()

@@ -114,20 +114,19 @@ void StateLabel::updateData()
 	const auto& outputData = data.getOutputData();
 	QString minTax = QString::number(utils::myCeil(outputData.taxRange.second * 100, precisionTax), 'f', precisionTax);
 	QString maxTax = QString::number(utils::myCeil(outputData.taxRange.first * 100, precisionTax), 'f', precisionTax);
-	bool isRanged = minTax != maxTax;
-	emit taxRangeChanged((isRanged) ? (minTax + " - " + maxTax) : maxTax);
+	emit taxRangeChanged((minTax != maxTax) ? (minTax + " - " + maxTax) : maxTax);
 
-	QString minProfit = QString::number(utils::myCeil(outputData.gridProfitRange.first, precisionTax), 'f', precisionTax);
-	QString maxProfit = QString::number(utils::myCeil(outputData.gridProfitRange.second, precisionTax), 'f', precisionTax);
-	emit gridProfitChanged((isRanged) ? (minProfit + " - " + maxProfit) : maxProfit);
+	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first, precisionTax), 'f', precisionTax);
+	QString maxProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.second, precisionTax), 'f', precisionTax);
+	emit gridProfitChanged((minProfit != maxProfit) ? (minProfit + " - " + maxProfit) : maxProfit);
 
-	QString minPosition = QString::number(utils::myCeil(outputData.positionProfitRange.first, 6), 'f', 6);
-	QString maxPosition = QString::number(utils::myCeil(outputData.positionProfitRange.second, 6), 'f', 6);
-	emit positionProfitChanged((isRanged) ? (minPosition + " - " + maxPosition) : maxPosition);
+	QString minPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.first, 6), 'f', 6);
+	QString maxPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.second, 6), 'f', 6);
+	emit positionProfitChanged((minPosition != maxPosition) ? (minPosition + " - " + maxPosition) : maxPosition);
 
-	QString minTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.second, precisionTax), 'f', precisionTax);
-	QString maxTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.first, precisionTax), 'f', precisionTax);
-	emit taxSpendingChanged((isRanged) ? (minTaxSpending + " - " + maxTaxSpending) : maxTaxSpending);
+	QString minTaxSpending = QString::number(utils::myTrunc(outputData.spengindOnTaxRange.second, precisionTax), 'f', precisionTax);
+	QString maxTaxSpending = QString::number(utils::myTrunc(outputData.spengindOnTaxRange.first, precisionTax), 'f', precisionTax);
+	emit taxSpendingChanged((minTaxSpending != maxTaxSpending) ? (minTaxSpending + " - " + maxTaxSpending) : maxTaxSpending);
 
 	emit minPositionChanged(QString::number(utils::myCeil(outputData.minPosition, data.getPrecision()), 'f', data.getPrecision()));
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
