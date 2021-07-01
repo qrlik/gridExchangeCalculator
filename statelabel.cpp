@@ -112,9 +112,10 @@ void StateLabel::updateData()
 {
 	data.updateOutput();
 	const auto& outputData = data.getOutputData();
-	QString minTax = QString::number(utils::myCeil(outputData.taxRange.second * 100, precisionTax), 'f', precisionTax);
-	QString maxTax = QString::number(utils::myCeil(outputData.taxRange.first * 100, precisionTax), 'f', precisionTax);
-	emit taxRangeChanged((minTax != maxTax) ? (minTax + " - " + maxTax) : maxTax);
+	const auto [minTax, maxTax] = std::minmax(outputData.taxRange.first, outputData.taxRange.second);
+	QString minTaxStr = QString::number(utils::myCeil(minTax * 100, precisionTax), 'f', precisionTax);
+	QString maxTaxStr = QString::number(utils::myCeil(maxTax * 100, precisionTax), 'f', precisionTax);
+	emit taxRangeChanged((minTax != maxTax) ? (minTaxStr + " - " + maxTaxStr) : maxTaxStr);
 
 	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first, precisionTax), 'f', precisionTax);
 	QString maxProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.second, precisionTax), 'f', precisionTax);

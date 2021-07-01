@@ -80,6 +80,41 @@ void dataController::updateGridsAmount(int aValue)
 	inputData.gridsAmount = aValue;
 }
 
+bool dataController::checkMaxGridsAmount(int aValue)
+{
+	const int minProfitAmount = 1;
+	const int intFactor = std::pow(10, precision);
+
+	const auto exp = 1.0 / (aValue + 1);
+	const factor gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+
+	bool isAllGridsCorrect = true;
+	currency prevGrid = inputData.lowerPrice;
+	for (auto i = 1, size = aValue + 2; i < size; ++i)
+	{
+		const auto prevGridInt = static_cast<int>(std::trunc(prevGrid * intFactor));
+		const currency currentGrid = (i + 1 == size) ? inputData.upperPrice : utils::myTrunc(prevGrid * gridFactor, precision);
+		const auto currentGridInt = static_cast<int>(std::trunc(currentGrid * intFactor));
+		const auto gridsDiff = currentGridInt - prevGridInt;
+
+		const auto prevTax = static_cast<int>(std::trunc(calculateTax(prevGrid).first * intFactor));
+		const auto currentTax = static_cast<int>(std::trunc(calculateTax(currentGrid).first * intFactor));
+		const auto profit = gridsDiff - prevTax - currentTax;
+
+		if (profit < minProfitAmount)
+		{
+			isAllGridsCorrect = false;
+			break;
+		}
+		else
+		{
+			prevGrid = currentGrid;
+			continue;
+		}
+	}
+	return isAllGridsCorrect;
+}
+
 void dataController::updateMaxGridsAmount()
 {
 	const currency minProfitAmount = 1.0 / std::pow(10, precision);
@@ -87,7 +122,12 @@ void dataController::updateMaxGridsAmount()
 	const auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
 	const auto logLower = log2(outputData.taxRange.first * 2 + minProfitForLowerPrice + 1);
 	const auto compare = logUpper / logLower - 1;
-	outputData.maxGridsAmount = std::trunc(compare);
+	int maxGridsAmount = std::trunc(compare);
+	while(!checkMaxGridsAmount(maxGridsAmount))
+	{
+		--maxGridsAmount;
+	}
+	outputData.maxGridsAmount = maxGridsAmount;
 }
 
 void dataController::updateProfitAndSpending()

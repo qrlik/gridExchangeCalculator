@@ -51,6 +51,7 @@ public:
 private:
 	double updateDoubleVariable(QString aString, double& aVariable);
 	void updateTaxRange();
+	bool dataController::checkMaxGridsAmount(int aValue);
 	void updateMaxGridsAmount();
 	void updateProfitAndSpending();
 	void updateGrids();
