@@ -64,7 +64,7 @@ void MainWindow::setupSignals()
 	ui->GridProfitControl->connect(ui->DataStateLabel, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
 	ui->TaxSpendingControl->connect(ui->DataStateLabel, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
 	ui->MinPositionControl->connect(ui->DataStateLabel, SIGNAL(minPositionChanged(QString)), SLOT(setText(QString)));
-	connect(ui->DataStateLabel, SIGNAL(gridsListChanged(const QVector<double>&)), SLOT(changeGridsList(const QVector<double>&)));
+	connect(ui->DataStateLabel, SIGNAL(gridsListChanged(const QVector<gridInfo>&)), SLOT(changeGridsList(const QVector<gridInfo>&)));
 }
 
 void MainWindow::changeGridsAmountEnabled(bool aEnabled)
@@ -87,12 +87,15 @@ void MainWindow::changeGridsAmount(int aValue)
 	ui->GridsAmountSpin->setValue(aValue);
 }
 
-void MainWindow::changeGridsList(const QVector<double>& aList)
+void MainWindow::changeGridsList(const QVector<gridInfo>& aList)
 {
 	ui->GridsList->clear();
-	for(auto gridAmount : aList)
+	for(auto gridInfo : aList)
 	{
-		ui->GridsList->addItem(QString::number(gridAmount, 'f', ui->DataStateLabel->getPrecision()));
+		const auto price = QString::number(gridInfo.price, 'f', ui->DataStateLabel->getPrecision());
+		const auto profit = QString::number(gridInfo.profit, 'f', ui->DataStateLabel->getPrecision());
+		const auto tax = QString::number(gridInfo.tax, 'f', ui->DataStateLabel->getPrecision());
+		ui->GridsList->addItem(price + " | " + profit + " | " + tax);
 	}
 }
 

@@ -132,23 +132,26 @@ void dataController::updateMaxGridsAmount()
 
 void dataController::updateProfitAndSpending()
 {
-	const percents lowerGridPercents = (outputData.grids[1] / outputData.grids[0] - 1) * 100;
-	const currency lowerGridDiff = outputData.grids[1] - outputData.grids[0];
-	const currency lowerGridProfit = lowerGridDiff - calculateTax(outputData.grids[1]).first
-									 - calculateTax(outputData.grids[0]).first;
-	outputData.gridProfitRange.first = lowerGridPercents * lowerGridProfit / lowerGridDiff;
-	const auto lastIndex = outputData.grids.size() - 1;
-	const percents upperGridPercents = (outputData.grids[lastIndex] / outputData.grids[lastIndex - 1] - 1) * 100;
-	const currency upperGridDiff = outputData.grids[lastIndex] - outputData.grids[lastIndex - 1];
-	const currency upperGridProfit = upperGridDiff - calculateTax(outputData.grids[lastIndex]).first
-									 - calculateTax(outputData.grids[lastIndex - 1]).first;
-	outputData.gridProfitRange.second = upperGridPercents * upperGridProfit / upperGridDiff;
+	auto calculateProfitAndSpending = [this](double firstPrice, double secondPrice){
+		percents percents = (secondPrice / firstPrice - 1) * 100;
+		currency priceDiff = secondPrice - firstPrice;
+		currency profit = priceDiff - calculateTax(secondPrice).first - calculateTax(firstPrice).first;
+		QPair<double, double> result;
+		result.first = percents * profit / priceDiff;
+		result.second = (priceDiff - profit) / priceDiff * 100;
+		return result;
+	};
+
+	const auto lowerGrid = calculateProfitAndSpending(outputData.grids[0].price, outputData.grids[1].price);
+	const auto upperGrid = calculateProfitAndSpending(outputData.grids[outputData.grids.size() - 2].price,
+													  outputData.grids[outputData.grids.size() - 1].price);
+	outputData.gridProfitRange.first = lowerGrid.first;
+	outputData.gridProfitRange.second = upperGrid.first;
+	outputData.spengindOnTaxRange.first = lowerGrid.second;
+	outputData.spengindOnTaxRange.second = upperGrid.second;
 
 	outputData.positionProfitRange.first = outputData.gridProfitRange.first / (inputData.gridsAmount + 1);
 	outputData.positionProfitRange.second = outputData.gridProfitRange.second / (inputData.gridsAmount + 1);
-
-	outputData.spengindOnTaxRange.first = (lowerGridDiff - lowerGridProfit) / lowerGridDiff * 100;
-	outputData.spengindOnTaxRange.second = (upperGridDiff - upperGridProfit) / upperGridDiff * 100;
 }
 
 void dataController::updateGrids()
@@ -160,17 +163,20 @@ void dataController::updateGrids()
 	gridsVector.clear();
 	gridsVector.reserve(outputData.maxGridsAmount + 2);
 	gridsVector.resize(inputData.gridsAmount + 2);
-	outputData.minPosition = inputData.lowerPrice;
-	gridsVector[0] = inputData.lowerPrice;
+	gridsVector[0].price = inputData.lowerPrice;
 	for(auto i = 0; i < inputData.gridsAmount; ++i)
 	{
-		gridsVector[i + 1] = gridsVector[i] * gridFactor;
-		outputData.minPosition += gridsVector[i + 1];
+		gridsVector[i + 1].price = gridsVector[i].price * gridFactor;
 	}
-	gridsVector[inputData.gridsAmount + 1] = inputData.upperPrice;
-	for(auto& gridAmount : gridsVector)
+	gridsVector[inputData.gridsAmount + 1].price = inputData.upperPrice;
+
+	outputData.minPosition = gridsVector[0].price;
+	for (auto i = 0; i + 1 < gridsVector.size(); ++i)
 	{
-		gridAmount = utils::myTrunc(gridAmount, precision);
+		gridsVector[i + 1].price = utils::myTrunc(gridsVector[i + 1].price, precision);
+		gridsVector[i + 1].tax = calculateTax(gridsVector[i].price).first + calculateTax(gridsVector[i + 1].price).first;
+		gridsVector[i + 1].profit = gridsVector[i + 1].price - gridsVector[i].price - gridsVector[i + 1].tax;
+		outputData.minPosition += gridsVector[i + 1].price;
 	}
 }
 

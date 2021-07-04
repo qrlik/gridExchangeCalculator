@@ -18,8 +18,14 @@ struct inputData {
 	int gridsAmount = 0;
 };
 
+struct gridInfo {
+	currency price = 0.0;
+	currency profit = 0.0;
+	currency tax = 0.0;
+};
+
 struct outputData {
-	QVector<currency> grids;
+	QVector<gridInfo> grids;
 	QPair<factor, factor> taxRange = { 0.0, 0.0 }; // max(lower price), min(upper price)
 	QPair<percents, percents> gridProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)
 	QPair<percents, percents> positionProfitRange = { 0.0, 0.0 }; // min(lower grids), max(upper grids)

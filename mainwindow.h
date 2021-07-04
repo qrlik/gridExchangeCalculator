@@ -7,6 +7,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+struct gridInfo;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -21,7 +22,7 @@ private slots:
 	void changeGridsAmountEnabled(bool aEnabled);
 	void changeGridsAmountRange(int aMinimum, int aMaximum);
 	void changeGridsAmount(int aValue);
-	void changeGridsList(const QVector<double>& aList);
+	void changeGridsList(const QVector<gridInfo>& aList);
 
 private:
 	void setupSignals();
