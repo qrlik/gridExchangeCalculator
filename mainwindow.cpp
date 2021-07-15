@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QStyleFactory"
-#include "globalvariables.h"
-#include "utils.h"
+#include "utils/globalvariables.h"
+#include "utils/utils.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

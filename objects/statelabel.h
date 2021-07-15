@@ -2,7 +2,7 @@
 #define STATELABEL_H
 
 #include <QLabel>
-#include "dataController.h"
+#include "systems/dataController.h"
 
 class StateLabel : public QLabel
 {

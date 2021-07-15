@@ -9,18 +9,18 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    dataController.cpp \
     main.cpp \
     mainwindow.cpp \
-    statelabel.cpp \
-    utils.cpp
+    objects/statelabel.cpp \
+    systems/dataController.cpp \
+    utils/utils.cpp
 
 HEADERS += \
-    dataController.h \
-    globalvariables.h \
     mainwindow.h \
-    statelabel.h \
-    utils.h
+    objects/statelabel.h \
+    systems/dataController.h \
+    utils/globalvariables.h \
+    utils/utils.h
 
 FORMS += \
     mainwindow.ui

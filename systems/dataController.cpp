@@ -1,6 +1,6 @@
 #include "dataController.h"
-#include "globalvariables.h"
-#include "utils.h"
+#include "utils/globalvariables.h"
+#include "utils/utils.h"
 
 currency dataController::updateVariable(QString aString, currency& aVariable)
 {

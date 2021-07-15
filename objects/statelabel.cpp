@@ -1,6 +1,6 @@
 #include "statelabel.h"
-#include "globalvariables.h"
-#include "utils.h"
+#include "utils/globalvariables.h"
+#include "utils/utils.h"
 
 StateLabel::StateLabel(QWidget* aParent): QLabel(aParent)
 {
