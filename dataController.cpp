@@ -2,76 +2,36 @@
 #include "globalvariables.h"
 #include "utils.h"
 
-namespace
+currency dataController::updateVariable(QString aString, currency& aVariable)
 {
-#ifdef QT_DEBUG
-	const std::unordered_map<double, double> taxTestData
-	{
-		{ 1.0, 0.01 },
-		{ 5.0, 0.01 },
-		{ 10.0, 0.01 },
-		{ 20.0, 0.01 },
-		{ 20.01, 0.02 },
-		{ 40.01, 0.03 },
-		{ 60.01, 0.04 },
-		{ 80.01, 0.05 },
-		{ 100.01, 0.06 }
-	};
-#endif
-}
-
-dataController::dataController()
-{
-#ifdef QT_DEBUG
-	testTax();
-#endif
-}
-
-#ifdef QT_DEBUG
-void dataController::testTax()
-{
-	precision = 2;
-	inputData.baseTax = 0.0005;
-	for(auto [price, tax] :taxTestData){
-		auto calculatedTax = calculateTax(price).first;
-		assert(calculatedTax == tax);
-	}
-	precision = 0;
-	inputData.baseTax = 0.0;
-}
-#endif
-
-double dataController::updateDoubleVariable(QString aString, double& aVariable)
-{
-	bool success = false;
-	aVariable = aString.toDouble(&success);
+	aVariable = utils::myTrunc(aString.toDouble() * std::pow(10, precision));
 	return aVariable;
 }
 
 currency dataController::updateUpperPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, inputData.upperPrice);
+	return updateVariable(aValue, inputData.upperPrice);
 }
 
 currency dataController::updateCurrentPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, inputData.currentPrice);
+	return updateVariable(aValue, inputData.currentPrice);
 }
 
 currency dataController::updateLowerPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, inputData.lowerPrice);
+	return updateVariable(aValue, inputData.lowerPrice);
 }
 
 currency dataController::updateStopLossPrice(QString aValue)
 {
-	return updateDoubleVariable(aValue, inputData.stopLossPrice);
+	return updateVariable(aValue, inputData.stopLossPrice);
 }
 
 percents dataController::updateTax(QString aValue)
 {
-	auto taxPercent = updateDoubleVariable(aValue, inputData.baseTax);
-	inputData.baseTax /= 100;
+	auto taxPercent = aValue.toDouble();
+	inputData.baseTax = taxPercent / 100;
 	return taxPercent;
 }
 
@@ -80,26 +40,34 @@ void dataController::updateGridsAmount(int aValue)
 	inputData.gridsAmount = aValue;
 }
 
-bool dataController::checkMaxGridsAmount(int aValue)
+QVector<double> dataController::calculatePureGrids(int aGridsAmount)
+{
+	const auto exp = 1.0 / (aGridsAmount + 1);
+	const factor gridFactor = std::pow(static_cast<factor>(inputData.upperPrice) / inputData.lowerPrice, exp);
+
+	QVector<double> gridsVector(aGridsAmount + 2);
+	gridsVector[0] = inputData.lowerPrice;
+	for (auto i = 0; i < aGridsAmount; ++i)
+	{
+		gridsVector[i + 1] = gridsVector[i] * gridFactor;
+	}
+	gridsVector[aGridsAmount + 1] = inputData.upperPrice;
+	return gridsVector;
+}
+
+bool dataController::checkMaxGridsAmount(int aGridsAmount)
 {
 	const int minProfitAmount = 1;
-	const int intFactor = std::pow(10, precision);
 
-	const auto exp = 1.0 / (aValue + 1);
-	const factor gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+	const auto pureGrids = calculatePureGrids(aGridsAmount);
 
 	bool isAllGridsCorrect = true;
-	currency prevGrid = inputData.lowerPrice;
-	for (auto i = 1, size = aValue + 2; i < size; ++i)
+	currency prevGrid = utils::myTrunc(pureGrids[0]);
+	for (auto i = 1, size = aGridsAmount + 2; i < size; ++i)
 	{
-		const auto prevGridInt = static_cast<int>(std::trunc(prevGrid * intFactor));
-		const currency currentGrid = (i + 1 == size) ? inputData.upperPrice : utils::myTrunc(prevGrid * gridFactor, precision);
-		const auto currentGridInt = static_cast<int>(std::trunc(currentGrid * intFactor));
-		const auto gridsDiff = currentGridInt - prevGridInt;
-
-		const auto prevTax = static_cast<int>(std::trunc(calculateTax(prevGrid).first * intFactor));
-		const auto currentTax = static_cast<int>(std::trunc(calculateTax(currentGrid).first * intFactor));
-		const auto profit = gridsDiff - prevTax - currentTax;
+		const currency currentGrid = utils::myTrunc(pureGrids[i]);
+		const auto gridsDiff = currentGrid - prevGrid;
+		const auto profit = gridsDiff - calculateTax(prevGrid).first - calculateTax(currentGrid).first;
 
 		if (profit < minProfitAmount)
 		{
@@ -117,8 +85,8 @@ bool dataController::checkMaxGridsAmount(int aValue)
 
 void dataController::updateMaxGridsAmount()
 {
-	const currency minProfitAmount = 1.0 / std::pow(10, precision);
-	const factor minProfitForLowerPrice = minProfitAmount / inputData.lowerPrice;
+	const currency minProfitAmount = 1;
+	const factor minProfitForLowerPrice = static_cast<factor>(minProfitAmount) / inputData.lowerPrice;
 	const auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
 	const auto logLower = log2(outputData.taxRange.first * 2 + minProfitForLowerPrice + 1);
 	const auto compare = logUpper / logLower - 1;
@@ -132,13 +100,13 @@ void dataController::updateMaxGridsAmount()
 
 void dataController::updateProfitAndSpending()
 {
-	auto calculateProfitAndSpending = [this](double firstPrice, double secondPrice){
-		percents percents = (secondPrice / firstPrice - 1) * 100;
+	auto calculateProfitAndSpending = [this](currency firstPrice, currency secondPrice){
+		percents percents = (static_cast<double>(secondPrice) / firstPrice - 1) * 100;
 		currency priceDiff = secondPrice - firstPrice;
 		currency profit = priceDiff - calculateTax(secondPrice).first - calculateTax(firstPrice).first;
 		QPair<double, double> result;
 		result.first = percents * profit / priceDiff;
-		result.second = (priceDiff - profit) / priceDiff * 100;
+		result.second = static_cast<double>(priceDiff - profit) / priceDiff * 100;
 		return result;
 	};
 
@@ -156,24 +124,19 @@ void dataController::updateProfitAndSpending()
 
 void dataController::updateGrids()
 {
-	const auto exp = 1.0 / (inputData.gridsAmount + 1);
-	const factor gridFactor = std::pow(inputData.upperPrice / inputData.lowerPrice, exp);
+	const auto gridsAmount = inputData.gridsAmount;
+	const auto pureGrids = calculatePureGrids(gridsAmount);
 
 	auto& gridsVector = outputData.grids;
 	gridsVector.clear();
 	gridsVector.reserve(outputData.maxGridsAmount + 2);
 	gridsVector.resize(inputData.gridsAmount + 2);
-	gridsVector[0].price = inputData.lowerPrice;
-	for(auto i = 0; i < inputData.gridsAmount; ++i)
-	{
-		gridsVector[i + 1].price = gridsVector[i].price * gridFactor;
-	}
-	gridsVector[inputData.gridsAmount + 1].price = inputData.upperPrice;
 
+	gridsVector[0].price = utils::myTrunc(pureGrids[0]);
 	outputData.minPosition = gridsVector[0].price;
 	for (auto i = 0; i + 1 < gridsVector.size(); ++i)
 	{
-		gridsVector[i + 1].price = utils::myTrunc(gridsVector[i + 1].price, precision);
+		gridsVector[i + 1].price = utils::myTrunc(pureGrids[i + 1]);
 		gridsVector[i + 1].tax = calculateTax(gridsVector[i].price).first + calculateTax(gridsVector[i + 1].price).first;
 		gridsVector[i + 1].profit = gridsVector[i + 1].price - gridsVector[i].price - gridsVector[i + 1].tax;
 		outputData.minPosition += gridsVector[i + 1].price;
@@ -196,14 +159,14 @@ void dataController::updateOutput()
 
 QPair<currency, factor> dataController::calculateTax(currency aPrice)
 {
-	currency minimumTaxAmount = 1.0 / std::pow(10, precision);
-	currency calculatedTax = utils::myCeil(aPrice * inputData.baseTax, precision);
+	currency minimumTaxAmount = 1;
+	currency calculatedTax = utils::myCeil(aPrice * inputData.baseTax);
 	if (calculatedTax <= minimumTaxAmount)
 	{
-		return { minimumTaxAmount, minimumTaxAmount / aPrice };
+		return { minimumTaxAmount, static_cast<factor>(minimumTaxAmount) / aPrice };
 	}
 	else {
-		return { calculatedTax, calculatedTax / aPrice };
+		return { calculatedTax, static_cast<factor>(calculatedTax) / aPrice };
 	}
 }
 

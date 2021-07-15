@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "QStyleFactory"
 #include "globalvariables.h"
+#include "utils.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 
 	setupSignals();
-	setupTax();
 	setupPrecision();
+	setupTax();
 
 	QApplication::setStyle(QStyleFactory::create("Fusion"));
 }
@@ -90,11 +91,13 @@ void MainWindow::changeGridsAmount(int aValue)
 void MainWindow::changeGridsList(const QVector<gridInfo>& aList)
 {
 	ui->GridsList->clear();
+	const auto precision = ui->DataStateLabel->getPrecision();
+	const auto tenFactor = utils::getTenFactor(precision);
 	for(auto gridInfo : aList)
 	{
-		const auto price = QString::number(gridInfo.price, 'f', ui->DataStateLabel->getPrecision());
-		const auto profit = QString::number(gridInfo.profit, 'f', ui->DataStateLabel->getPrecision());
-		const auto tax = QString::number(gridInfo.tax, 'f', ui->DataStateLabel->getPrecision());
+		const auto price = QString::number(gridInfo.price / tenFactor, 'f', precision);
+		const auto profit = QString::number(gridInfo.profit / tenFactor, 'f', precision);
+		const auto tax = QString::number(gridInfo.tax / tenFactor, 'f', precision);
 		ui->GridsList->addItem(price + " | " + profit + " | " + tax);
 	}
 }

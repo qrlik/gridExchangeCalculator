@@ -1,12 +1,12 @@
 #ifndef UTILS_H
 #define UTILS_H
-
-
+#include "cstdint"
 class utils
 {
 public:
-	static double myCeil(double aValue, int aPrecision);
-	static double myTrunc(double aValue, int aPrecision);
+	static int64_t myCeil(double aValue);
+	static int64_t myTrunc(double aValue);
+	static double getTenFactor(int aFactor);
 };
 
 #endif // UTILS_H

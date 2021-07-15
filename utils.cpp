@@ -1,14 +1,17 @@
 #include "utils.h"
 #include "cmath"
 
-double utils::myCeil(double aValue, int aPrecision)
+int64_t utils::myCeil(double aValue)
 {
-	const auto tenFactor = std::pow(10, aPrecision);
-	return std::ceil(aValue * tenFactor) / tenFactor;
+	return static_cast<int64_t>(std::ceil(aValue));
 }
 
-double utils::myTrunc(double aValue, int aPrecision)
+int64_t utils::myTrunc(double aValue)
 {
-	const auto tenFactor = std::pow(10, aPrecision);
-	return std::trunc(aValue * tenFactor) / tenFactor;
+	return static_cast<int64_t>(std::trunc(aValue));
+}
+
+double utils::getTenFactor(int aFactor)
+{
+	return static_cast<double>(std::pow(10, aFactor));
 }

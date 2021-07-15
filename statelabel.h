@@ -38,7 +38,7 @@ signals:
 private:
 	void update();
 	void updateData();
-	void updateAndEmit(QString aValue, double(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString));
+	void updateAndEmit(QString aValue, currency(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString));
 
 	dataController data;
 };

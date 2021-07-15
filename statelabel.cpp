@@ -17,10 +17,12 @@ int StateLabel::getPrecision() const
 	return data.getPrecision();
 }
 
-void StateLabel::updateAndEmit(QString aValue, double(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString))
+void StateLabel::updateAndEmit(QString aValue, currency(dataController::*aDataPtr)(QString), void(StateLabel::*aThisPtr)(QString))
 {
 	auto result = (data.*aDataPtr)(aValue);
-	emit (this->*aThisPtr)(QString::number(result, 'f', data.getPrecision()));
+	const auto precision = data.getPrecision();
+	const auto tenFactor = utils::getTenFactor(precision);
+	emit (this->*aThisPtr)(QString::number(result / tenFactor, 'f', data.getPrecision()));
 	update();
 }
 
@@ -46,7 +48,9 @@ void StateLabel::updateStopLossPrice(QString aValue)
 
 void StateLabel::updateTax(QString aValue)
 {
-	updateAndEmit(aValue, &dataController::updateTax, &StateLabel::taxChanged);
+	auto result = data.updateTax(aValue);
+	emit taxChanged(QString::number(result, 'f', precisionTax));
+	update();
 }
 
 void StateLabel::updateGridsAmount(int aValue)
@@ -113,23 +117,26 @@ void StateLabel::updateData()
 	data.updateOutput();
 	const auto& outputData = data.getOutputData();
 	const auto [minTax, maxTax] = std::minmax(outputData.taxRange.first, outputData.taxRange.second);
-	QString minTaxStr = QString::number(utils::myCeil(minTax * 100, precisionTax), 'f', precisionTax);
-	QString maxTaxStr = QString::number(utils::myCeil(maxTax * 100, precisionTax), 'f', precisionTax);
+	const auto taxFactor = utils::getTenFactor(precisionTax);
+	QString minTaxStr = QString::number(utils::myCeil(minTax * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxTaxStr = QString::number(utils::myCeil(maxTax * taxFactor) / taxFactor, 'f', precisionTax);
 	emit taxRangeChanged((minTax != maxTax) ? (minTaxStr + " - " + maxTaxStr) : maxTaxStr);
 
-	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first, precisionTax), 'f', precisionTax);
-	QString maxProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.second, precisionTax), 'f', precisionTax);
+	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.second * taxFactor) / taxFactor, 'f', precisionTax);
 	emit gridProfitChanged((minProfit != maxProfit) ? (minProfit + " - " + maxProfit) : maxProfit);
 
-	QString minPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.first, 6), 'f', 6);
-	QString maxPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.second, 6), 'f', 6);
+	const auto profitFactor = utils::getTenFactor(6);
+	QString minPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.first * profitFactor) / profitFactor, 'f', 6);
+	QString maxPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.second * profitFactor) / profitFactor, 'f', 6);
 	emit positionProfitChanged((minPosition != maxPosition) ? (minPosition + " - " + maxPosition) : maxPosition);
 
-	QString minTaxSpending = QString::number(utils::myTrunc(outputData.spengindOnTaxRange.second, precisionTax), 'f', precisionTax);
-	QString maxTaxSpending = QString::number(utils::myTrunc(outputData.spengindOnTaxRange.first, precisionTax), 'f', precisionTax);
+	QString minTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.second * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.first * taxFactor) /  taxFactor, 'f', precisionTax);
 	emit taxSpendingChanged((minTaxSpending != maxTaxSpending) ? (minTaxSpending + " - " + maxTaxSpending) : maxTaxSpending);
 
-	emit minPositionChanged(QString::number(utils::myCeil(outputData.minPosition, data.getPrecision()), 'f', data.getPrecision()));
+	const auto precisionFactor = utils::getTenFactor(data.getPrecision());
+	emit minPositionChanged(QString::number(outputData.minPosition / precisionFactor, 'f', data.getPrecision()));
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
 	emit gridsListChanged(outputData.grids);
 }
