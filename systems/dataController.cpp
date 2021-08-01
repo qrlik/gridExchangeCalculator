@@ -2,6 +2,11 @@
 #include "utils/globalvariables.h"
 #include "utils/utils.h"
 
+dataController& dataController::getInstance(){
+	static dataController instance;
+	return instance;
+}
+
 currency dataController::updateVariable(QString aString, currency& aVariable)
 {
 	aVariable = utils::myTrunc(aString.toDouble() * std::pow(10, precision));
@@ -149,12 +154,46 @@ void dataController::updateTaxRange()
 	outputData.taxRange.second = calculateTax(inputData.upperPrice).second;
 }
 
+void dataController::updateData()
+{
+	updateOutput();
+	emitOutput();
+}
+
 void dataController::updateOutput()
 {
 	updateTaxRange();
 	updateMaxGridsAmount();
 	updateGrids();
 	updateProfitAndSpending();
+}
+
+void dataController::emitOutput()
+{
+	const auto& outputData = DATA_CONTROLLER.getOutputData();
+	const auto [minTax, maxTax] = std::minmax(outputData.taxRange.first, outputData.taxRange.second);
+	const auto taxFactor = utils::getTenFactor(precisionTax);
+	QString minTaxStr = QString::number(utils::myCeil(minTax * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxTaxStr = QString::number(utils::myCeil(maxTax * taxFactor) / taxFactor, 'f', precisionTax);
+	emit taxRangeChanged((minTax != maxTax) ? (minTaxStr + " - " + maxTaxStr) : maxTaxStr);
+
+	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.second * taxFactor) / taxFactor, 'f', precisionTax);
+	emit gridProfitChanged((minProfit != maxProfit) ? (minProfit + " - " + maxProfit) : maxProfit);
+
+	const auto profitFactor = utils::getTenFactor(6);
+	QString minPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.first * profitFactor) / profitFactor, 'f', 6);
+	QString maxPosition = QString::number(utils::myTrunc(outputData.positionProfitRange.second * profitFactor) / profitFactor, 'f', 6);
+	emit positionProfitChanged((minPosition != maxPosition) ? (minPosition + " - " + maxPosition) : maxPosition);
+
+	QString minTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.second * taxFactor) / taxFactor, 'f', precisionTax);
+	QString maxTaxSpending = QString::number(utils::myCeil(outputData.spengindOnTaxRange.first * taxFactor) /  taxFactor, 'f', precisionTax);
+	emit taxSpendingChanged((minTaxSpending != maxTaxSpending) ? (minTaxSpending + " - " + maxTaxSpending) : maxTaxSpending);
+
+	const auto precisionFactor = utils::getTenFactor(DATA_CONTROLLER.getPrecision());
+	emit minPositionChanged(QString::number(outputData.minPosition / precisionFactor, 'f', DATA_CONTROLLER.getPrecision()));
+	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
+	emit gridsListChanged(outputData.grids);
 }
 
 QPair<currency, factor> dataController::calculateTax(currency aPrice)

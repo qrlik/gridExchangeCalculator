@@ -4,8 +4,11 @@
 #include "QFlag"
 #include "QObject"
 #include "QVector"
+#include "cstdint"
 
-using currency = int;
+#define DATA_CONTROLLER dataController::getInstance()
+
+using currency = int64_t;
 using percents = double;
 using factor = double;
 
@@ -38,21 +41,41 @@ class dataController : public QObject
 {
 	Q_OBJECT
 public:
-	currency updateUpperPrice(QString aValue);
-	currency updateCurrentPrice(QString aValue);
-	currency updateLowerPrice(QString aValue);
-	currency updateStopLossPrice(QString aValue);
-	percents updateTax(QString aValue);
-	void updateGridsAmount(int aValue);
+	static dataController& getInstance();
 
-	void updateOutput();
+public:
+	void updateData();
+	currency updateUpperPrice(QString aPrice);
+	currency updateCurrentPrice(QString aPrice);
+	currency updateLowerPrice(QString aPrice);
+	currency updateStopLossPrice(QString aPrice);
+	percents updateTax(QString aTax);
+	void updateGridsAmount(int aValue);
 
 	const inputData& getInputData() const;
 	const outputData& getOutputData() const;
 	int getPrecision() const;
 	void setPrecision(int aPrecision);
 
+signals:
+	void gridsAmountRangeChanged(int, int);
+	void taxRangeChanged(QString);
+	void gridProfitChanged(QString);
+	void positionProfitChanged(QString);
+	void taxSpendingChanged(QString);
+	void gridsListChanged(QVector<gridInfo>);
+	void minPositionChanged(QString);
+
 private:
+	dataController() = default;
+	~dataController() = default;
+	dataController(const dataController&) = delete;
+	dataController(dataController&&) = delete;
+	dataController& operator=(const dataController&) = delete;
+	dataController& operator=(dataController&&) = delete;
+
+	void updateOutput();
+	void emitOutput();
 	currency updateVariable(QString aString, currency& aVariable);
 	void updateTaxRange();
 	bool checkMaxGridsAmount(int aGridsAmount);
