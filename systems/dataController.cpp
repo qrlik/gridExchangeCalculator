@@ -173,8 +173,8 @@ void dataController::emitOutput()
 	const auto& outputData = DATA_CONTROLLER.getOutputData();
 	const auto [minTax, maxTax] = std::minmax(outputData.taxRange.first, outputData.taxRange.second);
 	const auto taxFactor = utils::getTenFactor(precisionTax);
-	QString minTaxStr = QString::number(utils::myCeil(minTax * taxFactor) / taxFactor, 'f', precisionTax);
-	QString maxTaxStr = QString::number(utils::myCeil(maxTax * taxFactor) / taxFactor, 'f', precisionTax);
+	QString minTaxStr = QString::number(utils::myCeil(minTax * taxFactor * 100) / taxFactor, 'f', precisionTax);
+	QString maxTaxStr = QString::number(utils::myCeil(maxTax * taxFactor * 100) / taxFactor, 'f', precisionTax);
 	emit taxRangeChanged((minTax != maxTax) ? (minTaxStr + " - " + maxTaxStr) : maxTaxStr);
 
 	QString minProfit = QString::number(utils::myTrunc(outputData.gridProfitRange.first * taxFactor) / taxFactor, 'f', precisionTax);
