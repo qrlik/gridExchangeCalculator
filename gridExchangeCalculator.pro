@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    objects/gridslistmodel.cpp \
     objects/statelabel.cpp \
     systems/dataController.cpp \
     systems/dataHelper.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
+    objects/gridslistmodel.h \
     objects/statelabel.h \
     systems/dataController.h \
     systems/dataHelper.h \

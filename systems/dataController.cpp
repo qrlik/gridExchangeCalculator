@@ -105,7 +105,7 @@ void dataController::emitOutput()
 	const auto precisionFactor = utils::getTenFactor(DATA_CONTROLLER.getPrecision());
 	emit minPositionChanged(QString::number(outputData.minPosition / precisionFactor, 'f', DATA_CONTROLLER.getPrecision()));
 	emit gridsAmountRangeChanged(0, outputData.maxGridsAmount);
-	emit gridsListChanged(outputData.grids);
+	emit gridsListChanged();
 }
 
 const inputData& dataController::getInputData() const

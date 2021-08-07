@@ -1,6 +1,7 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "QStyleFactory"
+#include "objects/gridslistmodel.h"
+#include "ui_mainwindow.h"
 #include "utils/globalvariables.h"
 #include "utils/utils.h"
 
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	ui->GridsList->setModel(new gridsModel());
 
 	setupSignals();
 	setupPrecision();
@@ -92,7 +94,7 @@ void MainWindow::setupSignals()
 	ui->GridProfitControl->connect(&DATA_CONTROLLER, SIGNAL(gridProfitChanged(QString)), SLOT(setText(QString)));
 	ui->TaxSpendingControl->connect(&DATA_CONTROLLER, SIGNAL(taxSpendingChanged(QString)), SLOT(setText(QString)));
 	ui->MinPositionControl->connect(&DATA_CONTROLLER, SIGNAL(minPositionChanged(QString)), SLOT(setText(QString)));
-	connect(&DATA_CONTROLLER, SIGNAL(gridsListChanged(QVector<gridInfo>)), SLOT(changeGridsList(QVector<gridInfo>)));
+	ui->GridsList->model()->connect(&DATA_CONTROLLER, SIGNAL(gridsListChanged()), SLOT(update()));
 }
 
 void MainWindow::changeGridsAmountEnabled(bool aEnabled)
@@ -114,20 +116,6 @@ void MainWindow::changeGridsAmount(int aValue)
 	ui->GridsAmountSlider->setValue(aValue);
 	ui->GridsAmountSpin->setValue(aValue);
 	ui->DataStateLabel->update();
-}
-
-void MainWindow::changeGridsList(QVector<gridInfo> aList)
-{
-	ui->GridsList->clear();
-	const auto precision = DATA_CONTROLLER.getPrecision();
-	const auto tenFactor = utils::getTenFactor(precision);
-	for(auto gridInfo : aList)
-	{
-		const auto price = QString::number(gridInfo.price / tenFactor, 'f', precision);
-		const auto profit = QString::number(gridInfo.profit / tenFactor, 'f', precision);
-		const auto tax = QString::number(gridInfo.tax / tenFactor, 'f', precision);
-		ui->GridsList->addItem(price + " | " + profit + " | " + tax);
-	}
 }
 
 void MainWindow::setupTax()
