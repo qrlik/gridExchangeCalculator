@@ -13,12 +13,14 @@ SOURCES += \
     mainwindow.cpp \
     objects/statelabel.cpp \
     systems/dataController.cpp \
+    systems/dataHelper.cpp \
     utils/utils.cpp
 
 HEADERS += \
     mainwindow.h \
     objects/statelabel.h \
     systems/dataController.h \
+    systems/dataHelper.h \
     utils/globalvariables.h \
     utils/utils.h
 

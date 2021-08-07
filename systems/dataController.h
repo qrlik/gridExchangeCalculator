@@ -78,12 +78,7 @@ private:
 	void emitOutput();
 	currency updateVariable(QString aString, currency& aVariable);
 	void updateTaxRange();
-	bool checkMaxGridsAmount(int aGridsAmount);
-	void updateMaxGridsAmount();
 	void updateProfitAndSpending();
-	void updateGrids();
-	QPair<currency, factor> calculateTax(currency aPrice);
-	QVector<double> calculatePureGrids(int aGridsAmount);
 
 	inputData inputData;
 	outputData outputData;
