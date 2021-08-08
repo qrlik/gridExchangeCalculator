@@ -66,10 +66,10 @@ int dataHelper::calculateMaxGridsAmount()
 	const currency minProfitAmount = 1;
 
 	const factor minProfitForLowerPrice = static_cast<factor>(minProfitAmount) / inputData.lowerPrice;
-	const auto logUpper = log2(inputData.upperPrice / inputData.lowerPrice);
+	const auto logUpper = log2(static_cast<factor>(inputData.upperPrice) / inputData.lowerPrice);
 	const auto logLower = log2(outputData.taxRange.first * 2 + minProfitForLowerPrice + 1);
 	const auto compare = logUpper / logLower - 1;
-	int maxGridsAmount = std::trunc(compare);
+	auto maxGridsAmount = static_cast<int>(std::trunc(compare));
 	while(!checkMaxGridsAmount(maxGridsAmount))
 	{
 		--maxGridsAmount;
